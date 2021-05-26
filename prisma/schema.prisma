@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  UserId       Int       @id
+  Username     String    @unique
+  Fullname     String
+  Password     String
+  PasswordSalt String
+  Rating       Int
+  RoleId       Int
+  role         role      @relation(fields: [RoleId], references: [RoleId])
+  comment      comment[]
+  hasdone      hasdone[]
+}
+
+model answer {
+  AnswerId   Int    @id
+  AnswerText String
+}
+
+model comment {
+  CommentId       Int      @id
+  Content         String
+  DateCreated     DateTime @db.Date
+  CommentedUserId Int
+  User            User     @relation(fields: [CommentedUserId], references: [UserId])
+}
+
+model hasdone {
+  UserId         Int
+  TestId         Int
+  CompletionDate DateTime @db.Date
+  TestHistory    String
+  test           test     @relation(fields: [TestId], references: [TestId])
+  User           User     @relation(fields: [UserId], references: [UserId])
+
+  @@id([UserId, TestId])
+}
+
+model question {
+  QuestionId      Int    @id
+  QuestionType    String
+  Statement       String
+  ListOfAnswerIds String
+  CorrentAnswerId Int
+}
+
+model questiongroup {
+  QuestionGroupId Int         @id
+  QuestionRange   String
+  IntroText       String
+  TestSectionId   Int
+  testsection     testsection @relation(fields: [TestSectionId], references: [TestSectionId])
+}
+
+model role {
+  RoleId   Int    @id
+  RoleName String
+  User     User[]
+}
+
+model test {
+  TestId           Int       @id
+  TestType         String
+  ListOfSectionIds String
+  hasdone          hasdone[]
+}
+
+model testsection {
+  TestSectionId     Int             @id
+  TestSectionType   String
+  StatementText     String?
+  StatementAudio    Bytes?
+  ListOfQuestionIds String
+  questiongroup     questiongroup[]
+}
