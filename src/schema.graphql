@@ -1,0 +1,65 @@
+type Query {
+
+}
+
+type Mutation {
+
+} 
+
+type Subscription {
+
+}
+
+type User {
+    id:                 int!
+    username:           String!
+    fullname:           String
+    role:               Role
+    Rating:             int!
+    comments:           [Comment!]
+    doneTests:          [Test!]
+}
+
+type Role {
+    id:                 int!
+    name:               String!
+}
+
+type Test {
+    id:                 int!
+    type:               String!
+    sectionList:        [int!]!
+}
+
+type TestSection {
+    id:                 int!
+    type:               String!
+    statementText:      String
+    statementAudio:     String
+    questionList:       [QuestionGroup!]!
+}
+
+type Question {
+    id:                 int!
+    type:               String!
+    statementText:      String!
+    answers:            [Answer!]
+}
+
+type QuestionGroup {
+    id:                 int!
+    introText:          String!
+    questions:          [Question!]!
+}
+
+type Answer {
+    id:                 int!
+    text:               String!
+}
+
+type Comment {
+    id:                 int!
+    user:               User!
+    content:            String!
+    created:            String!
+}

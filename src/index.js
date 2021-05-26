@@ -1,27 +1,29 @@
-const { ApolloServer } = require('apollo-server');
+const { ApolloServer } = require('apollo-server')
+const { PrismaClient } = require('@prisma/client')
+const fs = require('fs')
+const path = require('path')
 
-// 1
-const typeDefs = `
-  type Query {
-    info: String!
-  }
-`
+const prisma = new PrismaClient()
 
-// 2
 const resolvers = {
-  Query: {
-    info: () => `This is information`
-  }
+	Query: {
+
+	}
 }
 
-// 3
 const server = new ApolloServer({
-  typeDefs,
-  resolvers,
+	typeDefs: fs.readFileSync(
+		path.join(__dirname, 'schema.graphql'),
+		'utf-8'
+	),
+	resolvers,
+	context: {
+		prisma,
+	}
 })
 
 server
-  .listen()
-  .then(({ url }) =>
-    console.log(`Server is running on ${url}`)
-  );
+	.listen()
+	.then(({ url }) =>
+		console.log(`Server is running on ${url}`)
+	);
