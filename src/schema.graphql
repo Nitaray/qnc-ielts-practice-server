@@ -32,6 +32,10 @@ type User {
     doneTests:          [Test!]
 }
 
+fragment personalInfo on User {
+    fullname
+}
+
 type Role {
     id:                 int!
     name:               String!
