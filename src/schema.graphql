@@ -1,13 +1,25 @@
 type Query {
-
+    allTests(auth: AuthPayload!):                               [Test!]!
+    test(id: int!, auth: AuthPayload!):                         Test
+    user(id: int!, auth: AuthPayload!):                         User
 }
 
 type Mutation {
-
+    signup(username: String!, password: String!, name: String): AuthPayload
+    login(username: String!, password: String!):                AuthPayload
+    createComment(content: String!, auth: AuthPayload!):        Boolean!
+    deleteComment(commentId: int!, auth: AuthPayload!):         Boolean!
+    addTest(test: Test!):                                       Boolean!
+    changeName(newName: String!, auth: AuthPayload):            Boolean!
 } 
 
 type Subscription {
 
+}
+
+type AuthPayload {
+    token:              String
+    user:               User
 }
 
 type User {
@@ -28,7 +40,8 @@ type Role {
 type Test {
     id:                 int!
     type:               String!
-    sectionList:        [int!]!
+    sections:           [TestSection!]!
+    comments:           [Comment!]
 }
 
 type TestSection {
