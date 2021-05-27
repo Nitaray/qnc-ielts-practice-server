@@ -1,82 +1,78 @@
 type Query {
-    allTests(auth: AuthPayload!):                               [Test!]!
-    test(id: int!, auth: AuthPayload!):                         Test
-    user(id: int!, auth: AuthPayload!):                         User
+	allTests:		[Test!]!
+	test(id: int!):	Test
+	user(id: int!):	User
 }
 
 type Mutation {
-    signup(username: String!, password: String!, name: String): AuthPayload
-    login(username: String!, password: String!):                AuthPayload
-    createComment(content: String!, auth: AuthPayload!):        Boolean!
-    deleteComment(commentId: int!, auth: AuthPayload!):         Boolean!
-    addTest(test: Test!):                                       Boolean!
-    changeName(newName: String!, auth: AuthPayload):            Boolean!
+	signup(username: String!, password: String!, name: String): AuthPayload
+	login(username: String!, password: String!):                AuthPayload
+	createComment(content: String!):                            Boolean!
+	deleteComment(commentId: int!):                             Boolean!
+	addTest(test: Test!):                                       Boolean!
+	changeName(newName: String!):                               Boolean!
 } 
 
-type Subscription {
-
-}
-
 type AuthPayload {
-    token:              String
-    user:               User
+	token:              String
+	user:               User
 }
 
 type User {
-    id:                 int!
-    username:           String!
-    fullname:           String
-    role:               Role
-    Rating:             int!
-    comments:           [Comment!]
-    doneTests:          [Test!]
+	id:                 int!
+	username:           String!
+	fullname:           String
+	role:               Role
+	Rating:             int!
+	comments:           [Comment!]
+	doneTests:          [Test!]
 }
 
 fragment personalInfo on User {
-    fullname
+	fullname
 }
 
 type Role {
-    id:                 int!
-    name:               String!
+	id:                 int!
+	name:               String!
 }
 
 type Test {
-    id:                 int!
-    type:               String!
-    sections:           [TestSection!]!
-    comments:           [Comment!]
+	id:                 int!
+	type:               String!
+	sections:           [TestSection!]!
+	comments:           [Comment!]
 }
 
 type TestSection {
-    id:                 int!
-    type:               String!
-    statementText:      String
-    statementAudio:     String
-    questionList:       [QuestionGroup!]!
+	id:                 int!
+	type:               String!
+	statementText:      String
+	statementAudio:     String
+	questionList:       [QuestionGroup!]!
 }
 
 type Question {
-    id:                 int!
-    type:               String!
-    statementText:      String!
-    answers:            [Answer!]
+	id:                 int!
+	type:               String!
+	statementText:      String!
+	answers:            [Answer!]
 }
 
 type QuestionGroup {
-    id:                 int!
-    introText:          String!
-    questions:          [Question!]!
+	id:                 int!
+	introText:          String!
+	questions:          [Question!]!
 }
 
 type Answer {
-    id:                 int!
-    text:               String!
+	id:                 int!
+	text:               String!
 }
 
 type Comment {
-    id:                 int!
-    user:               User!
-    content:            String!
-    created:            String!
+	id:                 int!
+	user:               User!
+	content:            String!
+	created:            String!
 }
