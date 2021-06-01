@@ -46,6 +46,7 @@ type Test {
 
 type TestSection {
 	id:                 int!
+	order:				int!
 	type:               String!
 	statementText:      String
 	statementAudio:     String
@@ -54,6 +55,7 @@ type TestSection {
 
 type Question {
 	id:                 int!
+	order:				int!
 	type:               String!
 	statementText:      String!
 	answers:            [Answer!]
@@ -61,6 +63,7 @@ type Question {
 
 type QuestionGroup {
 	id:                 int!
+	order:				int!
 	introText:          String!
 	questions:          [Question!]!
 }
