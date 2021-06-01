@@ -27,14 +27,68 @@ async function login(parent, args, context, info) {
     }
 
     const token = jwt.sign({ userId: user.id }, APP_SECRET)
-
+    
     return {
         token,
         user,
     }
 }
 
+async function createComment(parent, args, context, info) {
+    const test = await context.prisma.test.findUnique({
+        where: {
+            TestId: args.testId
+        }
+    })
+
+    const user = await context.prisma.User.findUnique({
+        where: {
+            UserId: args.userId
+        }
+    })
+
+    if (test === null || user === null || args.content === "") 
+        return {
+            success: false,
+            message: "Either testId doesn't exist, userId doesn't exist, or comment is empty!"
+        }
+
+    let comment = await context.prisma.comment.create({
+        data: {
+            Content: args.content,
+            CommenteduserId: args.userId,
+        }
+    })
+
+    if (comment !== null) 
+        return {
+            success: true,
+            message: "Successfully added comment to database!"
+        }
+
+    return {
+        success: false,
+        message: "Failed to add comment to database! Please contact administrator for further information"
+    }
+}
+
+async function deleteComment(parent, args, context, info) {
+
+}
+
+async function addTest(parent, args, context, info) {
+    
+}
+
+async function changeName(parent, args, context, info) {
+    
+}
+
 module.exports = {
     signup,
-    login
+    login,
+    createComment,
+    deleteComment,
+    addTest,
+    changeName
 }

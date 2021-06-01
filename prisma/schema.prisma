@@ -8,27 +8,26 @@ datasource db {
 }
 
 model User {
-  UserId       Int       @id
-  Username     String    @unique
-  Fullname     String
-  Password     String
-  PasswordSalt String
-  Rating       Int
-  RoleId       Int
-  role         role      @relation(fields: [RoleId], references: [RoleId])
-  comment      comment[]
-  hasdone      hasdone[]
+  UserId   Int       @id @default(autoincrement())
+  Username String    @unique
+  Fullname String
+  Password String
+  Rating   Int
+  RoleId   Int
+  role     role      @relation(fields: [RoleId], references: [RoleId])
+  comment  comment[]
+  hasdone  hasdone[]
 }
 
 model answer {
-  AnswerId   Int    @id
+  AnswerId   Int    @id @default(autoincrement())
   AnswerText String
 }
 
 model comment {
-  CommentId       Int      @id
+  CommentId       Int      @id @default(autoincrement())
   Content         String
-  DateCreated     DateTime @db.Date
+  DateCreated     DateTime @default(dbgenerated("CURRENT_DATE")) @db.Date
   CommentedUserId Int
   User            User     @relation(fields: [CommentedUserId], references: [UserId])
 }
@@ -45,7 +44,7 @@ model hasdone {
 }
 
 model question {
-  QuestionId      Int    @id
+  QuestionId      Int    @id @default(autoincrement())
   QuestionType    String
   Statement       String
   ListOfAnswerIds String
@@ -53,7 +52,7 @@ model question {
 }
 
 model questiongroup {
-  QuestionGroupId Int         @id
+  QuestionGroupId Int         @id @default(autoincrement())
   QuestionRange   String
   IntroText       String
   TestSectionId   Int
@@ -61,20 +60,21 @@ model questiongroup {
 }
 
 model role {
-  RoleId   Int    @id
+  RoleId   Int    @id @default(autoincrement())
   RoleName String
   User     User[]
 }
 
 model test {
-  TestId           Int       @id
+  TestId           Int       @id @default(autoincrement())
   TestType         String
   ListOfSectionIds String
+  Title            String    @unique
   hasdone          hasdone[]
 }
 
 model testsection {
-  TestSectionId     Int             @id
+  TestSectionId     Int             @id @default(autoincrement())
   TestSectionType   String
   StatementText     String?
   StatementAudio    Bytes?

@@ -5,13 +5,18 @@ type Query {
 }
 
 type Mutation {
-	signup(username: String!, password: String!, name: String): AuthPayload
-	login(username: String!, password: String!):                AuthPayload
-	createComment(content: String!):                            Boolean!
-	deleteComment(commentId: int!):                             Boolean!
-	addTest(test: Test!):                                       Boolean!
-	changeName(newName: String!):                               Boolean!
+	signup(username: String!, password: String!, name: String): 	AuthPayload
+	login(username: String!, password: String!):                	AuthPayload
+	createComment(content: String!, testId: int!, userId: int!):	QResult!	
+	deleteComment(commentId: int!):                             	QResult!
+	addTest(test: Test!):                                       	QResult!
+	changeName(newName: String!):                               	QResult! 
 } 
+
+type QResult {
+	success:	Boolean!
+	message:	String!
+}
 
 type AuthPayload {
 	token:              String
@@ -23,7 +28,7 @@ type User {
 	username:           String!
 	fullname:           String
 	role:               Role
-	Rating:             int!
+	rating:             int!
 	comments:           [Comment!]
 	doneTests:          [Test!]
 }
@@ -39,6 +44,7 @@ type Role {
 
 type Test {
 	id:                 int!
+	title:				String!
 	type:               String!
 	sections:           [TestSection!]!
 	comments:           [Comment!]

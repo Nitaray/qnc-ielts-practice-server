@@ -7,7 +7,6 @@ const path = require('path')
 const { getUserId } = require('./utils')
 const Query = require('./resolvers/Query')
 const Mutation = require('./resolvers/Mutation')
-const Su
 
 const prisma = new PrismaClient()
 
