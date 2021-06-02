@@ -61,6 +61,34 @@ async function comments(parent, args, context, info) {
     return retComments
 }
 
+async function doneTests(parent, args, context, info) {
+    const doneTests = await context.prisma.user.findUnique({
+        where: {
+            UserId: parent.id
+        },
+        select: {
+            hasdone: {
+                select: {
+                    test: {
+                        select: {
+                            TestId: true,
+                            TestType: true,
+                            Title: true,
+                            ListOfSectionIds: true
+                        }
+                    },
+                    TestHistory: true
+                }
+            }
+        }
+    })
+
+    console.log(doneTests)
+    
+    const retTest = []
+    return retTest
+}
+
 
 module.exports = {
     id,
@@ -68,5 +96,6 @@ module.exports = {
     fullname,
     role,
     rating,
-    comments
+    comments,
+    doneTests
 }
