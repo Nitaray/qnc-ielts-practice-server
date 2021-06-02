@@ -3,15 +3,42 @@ const jwt = require('jsonwebtoken')
 const { APP_SECRET, getUserId } = require('../utils')
 
 async function signup(parent, args, context, info) {
-    const password = await bcrypt.hash(args.password, 10)
+    console.log(args)
+    let user = await context.prisma.user.findUnique({
+        where: {
+            Username: args.user.username
+        }
+    })
 
-    const user = await context.prisma.User.create({ data: { ...args, password } })
+    if (user)
+        throw new Error('Username already exists!')
+
+    const password = await bcrypt.hash(args.user.password, 10)
+
+    user = await context.prisma.user.create({ 
+        data: {
+            Username: args.user.username,
+            Fullname: args.user.name ? args.user.name : "",
+            Password: password,
+            Rating: process.env.DEFAULT_ELO | 1000,
+            RoleId: 1,
+        } 
+    })
+
+    const retUser = {
+        id: user.UserId,
+        username: user.Username,
+        fullname: user.Fullname,
+        rating: user.Rating
+    }
+
+    console.log(retUser);
 
     const token = jwt.sign({ userId: user.id }, APP_SECRET)
 
     return {
-        token,
-        user,
+        token: token,
+        user: retUser,
     }
 }
 
@@ -40,36 +67,26 @@ async function createComment(parent, args, context, info) {
             TestId: args.testId
         }
     })
+    if (test === null)
+        throw new Error("Test does not exist!")
 
     const user = await context.prisma.User.findUnique({
         where: {
             UserId: args.userId
         }
     })
+    if (user === null)
+        throw new Error("User does not exists!")
 
-    if (test === null || user === null || args.content === "") 
-        return {
-            success: false,
-            message: "Either testId doesn't exist, userId doesn't exist, or comment is empty!"
-        }
+    if (args.content === "")
+        throw new Error("Comment's content is empty!")
 
-    let comment = await context.prisma.comment.create({
+    return await context.prisma.comment.create({
         data: {
             Content: args.content,
             CommenteduserId: args.userId,
         }
     })
-
-    if (comment !== null) 
-        return {
-            success: true,
-            message: "Successfully added comment to database!"
-        }
-
-    return {
-        success: false,
-        message: "Failed to add comment to database! Please contact administrator for further information"
-    }
 }
 
 async function deleteComment(parent, args, context, info) {

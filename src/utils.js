@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const APP_SECRET = process.env.JWT_SECRET | "HEHE";
+const APP_SECRET = process.env.JWT_SECRET ? process.env.JWT_SECRET : "SMOOTH CRIMINAL H3H3";
 
 function getTokenPayload(token) {
     return jwt.verify(token, APP_SECRET);

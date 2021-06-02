@@ -1,36 +1,37 @@
 type Query {
-	allTests:		[Test!]!
-	test(id: int!):	Test
-	user(id: int!):	User
+	allTests:			[Test!]!
+	test(id: Int!):		Test
+	user(id: Int!):		User
 }
 
 type Mutation {
-	signup(username: String!, password: String!, name: String): 	AuthPayload
-	login(username: String!, password: String!):                	AuthPayload
-	createComment(content: String!, testId: int!, userId: int!):	QResult!	
-	deleteComment(commentId: int!):                             	QResult!
-	addTest(test: Test!):                                       	QResult!
-	changeName(newName: String!):                               	QResult! 
+	signup(user: UserInput!): 						AuthPayload
+	login(username: String!, password: String!):    AuthPayload
+	createComment(comment: CommentInput):			Comment!	
+	deleteComment(commentId: Int!):                 Comment!
+	addTest(test: TestInput!):                      Test!
+	changeName(newName: String!):                   User! 
 } 
 
-type QResult {
-	success:	Boolean!
-	message:	String!
-}
-
 type AuthPayload {
-	token:              String
-	user:               User
+	token:              String!
+	user:               User!
 }
 
 type User {
-	id:                 int!
+	id:                 Int!
 	username:           String!
 	fullname:           String
 	role:               Role
-	rating:             int!
+	rating:             Int!
 	comments:           [Comment!]
 	doneTests:          [Test!]
+}
+
+input UserInput {
+	username: 			String!
+	password:			String!
+	name:				String
 }
 
 fragment personalInfo on User {
@@ -38,21 +39,26 @@ fragment personalInfo on User {
 }
 
 type Role {
-	id:                 int!
+	id:                 Int!
 	name:               String!
 }
 
 type Test {
-	id:                 int!
+	id:                 Int!
 	title:				String!
 	type:               String!
 	sections:           [TestSection!]!
 	comments:           [Comment!]
 }
 
+input TestInput {
+	title:				String!
+	type:				String!
+}
+
 type TestSection {
-	id:                 int!
-	order:				int!
+	id:                 Int!
+	order:				Int!
 	type:               String!
 	statementText:      String
 	statementAudio:     String
@@ -60,28 +66,34 @@ type TestSection {
 }
 
 type Question {
-	id:                 int!
-	order:				int!
+	id:                 Int!
+	order:				Int!
 	type:               String!
 	statementText:      String!
 	answers:            [Answer!]
 }
 
 type QuestionGroup {
-	id:                 int!
-	order:				int!
+	id:                 Int!
+	order:				Int!
 	introText:          String!
 	questions:          [Question!]!
 }
 
 type Answer {
-	id:                 int!
+	id:                 Int!
 	text:               String!
 }
 
 type Comment {
-	id:                 int!
+	id:                 Int!
 	user:               User!
 	content:            String!
 	created:            String!
+}
+
+input CommentInput {
+	content:			String!
+	testId:				String!
+	userId:				String!
 }
