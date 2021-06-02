@@ -32,11 +32,41 @@ function rating(parent, args, context, info) {
     return parent.rating;
 }
 
+async function comments(parent, args, context, info) {
+    const userComments = await context.prisma.user.findUnique({
+        where: {
+            UserId: parent.id
+        },
+        select: {
+            comment: {
+                select: {
+                    CommentId: true,
+                    Content: true,
+                    DateCreated: true
+                }
+            }
+        }
+    })
+
+
+    const retComments = userComments.comment.map(comment => {
+        return {
+            id: comment.CommentId,
+            user: parent,
+            content: comment.Content,
+            created: comment.DateCreated
+        }
+    })
+
+    return retComments
+}
+
 
 module.exports = {
     id,
     username,
     fullname,
     role,
-    rating
+    rating,
+    comments
 }
