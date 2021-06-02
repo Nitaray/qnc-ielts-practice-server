@@ -3,6 +3,9 @@ const jwt = require('jsonwebtoken')
 const { APP_SECRET, getUserId } = require('../utils')
 
 async function signup(parent, args, context, info) {
+    if (args.user.username === "")
+        throw new Error('Username cannot be empty!')
+
     let user = await context.prisma.user.findUnique({
         where: {
             Username: args.user.username
