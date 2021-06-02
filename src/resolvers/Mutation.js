@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken')
 const { APP_SECRET, getUserId } = require('../utils')
 
 async function signup(parent, args, context, info) {
-    console.log(args)
     let user = await context.prisma.user.findUnique({
         where: {
             Username: args.user.username
@@ -31,8 +30,6 @@ async function signup(parent, args, context, info) {
         fullname: user.Fullname,
         rating: user.Rating
     }
-
-    console.log(retUser);
 
     const token = jwt.sign({ userId: user.id }, APP_SECRET)
 
