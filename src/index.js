@@ -1,5 +1,6 @@
-const { ApolloServer } = require('apollo-server')
+const { ApolloServer } = require('apollo-server-express')
 const { PrismaClient } = require('@prisma/client')
+const express = require('express')
 
 const fs = require('fs')
 const path = require('path')
@@ -40,8 +41,24 @@ const server = new ApolloServer({
 	}
 })
 
-server
-	.listen()
-	.then(({ url }) =>
-		console.log(`Server is running on ${url}`)
-	);
+// server
+// 	.listen()
+// 	.then(({ url }) =>
+// 		console.log(`Server is running on ${url}`)
+// 	);
+
+const app = express();
+
+// CORS configuration
+const corsOptions = {
+	origin: 'http://localhost:3000',
+	credentials: true
+}
+
+const PORT = process.env.PORT || 4000;
+
+server.applyMiddleware({ app, cors: corsOptions });
+
+app.listen(PORT, () => {
+	console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
+})
