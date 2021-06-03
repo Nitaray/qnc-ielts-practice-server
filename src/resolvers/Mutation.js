@@ -2,6 +2,8 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { APP_SECRET, verifyUser, verifyRolePermission} = require('../utils')
 
+const ADD_TEST_PERM = process.env.ADD_TEST_PERM || 3
+
 async function signup(parent, args, context, info) {
     if (args.user.username === "")
         throw new Error('Username cannot be empty!')
@@ -153,7 +155,31 @@ async function deleteComment(parent, args, context, info) {
 }
 
 async function addTest(parent, args, context, info) {
+    if (context.roleId < ADD_TEST_PERM)
+        throw new Error(`Access Denied! Only user with permission level ${ADD_TEST_PERM} or higher can add a Test`)
     
+    const test = await context.prisma.test.findUnique({
+        where: {
+            Title: args.test.title,
+        }
+    })
+
+    if (test !== null)
+        throw new Error('A test with the same title and type already exists!')
+
+    const createdTest = await context.prisma.test.create({
+        data: {
+            TestType: args.test.type,
+            Title: args.test.title
+        }
+    })
+
+    return {
+        id: createdTest.TestId,
+        title: createdTest.Title,
+        type: createdTest.TestType,
+        sections: []
+    }
 }
 
 async function changeName(parent, args, context, info) {
