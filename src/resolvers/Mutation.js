@@ -34,7 +34,7 @@ async function signup(parent, args, context, info) {
         rating: user.Rating
     }
 
-    const token = jwt.sign({ userId: user.id }, APP_SECRET)
+    const token = jwt.sign({ userId: user.UserId }, APP_SECRET)
 
     return {
         token: token,
@@ -60,7 +60,7 @@ async function login(parent, args, context, info) {
         rating: user.Rating
     }
 
-    const token = jwt.sign({ userId: user.id }, APP_SECRET)
+    const token = jwt.sign({ userId: user.UserId }, APP_SECRET)
     
     return {
         token: token,
