@@ -73,6 +73,17 @@ async function createComment(parent, args, context, info) {
     if (!verifyUser(context.userId, args.comment.userId))
         throw new Error("Access Denied! Unauthenticated user for this action!")
 
+    const comment = await context.prisma.comment.findFirst({
+        where: {
+            Content: args.comment.content,
+            CommentedUserId: args.comment.userId,
+            InTestId: args.comment.testId
+        }
+    })
+
+    if (comment !== null)
+        throw new Error("The exact comment has already exists! This fails to prevent spam!")
+
     const test = await context.prisma.test.findUnique({
         where: {
             TestId: args.comment.testId
