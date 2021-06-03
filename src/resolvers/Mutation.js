@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const { APP_SECRET, getUserId } = require('../utils')
+const { APP_SECRET, verifyUser} = require('../utils')
 
 async function signup(parent, args, context, info) {
     if (args.user.username === "")
@@ -69,17 +69,21 @@ async function login(parent, args, context, info) {
 }
 
 async function createComment(parent, args, context, info) {
+    
+    if (!verifyUser(context.userId, args.comment.userId))
+        throw new Error("Access Denied! Unauthenticated user for this action!")
+
     const test = await context.prisma.test.findUnique({
         where: {
-            TestId: args.testId
+            TestId: args.comment.testId
         }
     })
     if (test === null)
         throw new Error("Test does not exist!")
 
-    const user = await context.prisma.User.findUnique({
+    const user = await context.prisma.user.findUnique({
         where: {
-            UserId: args.userId
+            UserId: args.comment.userId
         }
     })
     if (user === null)
@@ -88,12 +92,21 @@ async function createComment(parent, args, context, info) {
     if (args.content === "")
         throw new Error("Comment's content is empty!")
 
-    return await context.prisma.comment.create({
+    const createdComment =  await context.prisma.comment.create({
         data: {
-            Content: args.content,
-            CommenteduserId: args.userId,
+            Content: args.comment.content,
+            CommentedUserId: args.comment.userId,
+            InTestId: args.comment.testId
         }
     })
+
+    const retComment = {
+        id: createdComment.CommentId,
+        content: createdComment.Content,
+        created: createdComment.DateCreated
+    }
+    
+    return retComment
 }
 
 async function deleteComment(parent, args, context, info) {

@@ -88,12 +88,13 @@ type Answer {
 type Comment {
 	id:                 Int!
 	user:               User!
+	test:				Test!
 	content:            String!
 	created:            String!
 }
 
 input CommentInput {
 	content:			String!
-	testId:				String!
-	userId:				String!
+	testId:				Int!
+	userId:				Int!
 }

@@ -24,7 +24,12 @@ function getUserId(req, authToken) {
     throw new Error('Not authenticated');
 }
 
+function verifyUser(currentID, claimedID) {
+    return currentID === claimedID || process.env.NODE_ENV !== 'development'
+}
+
 module.exports = {
     APP_SECRET,
-    getUserId
+    getUserId,
+    verifyUser
 };
