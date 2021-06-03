@@ -5,7 +5,7 @@ const express = require('express')
 const fs = require('fs')
 const path = require('path')
 
-const { getUserId } = require('./utils')
+const { getUserId, getUserRoleId } = require('./utils')
 
 const Query = require('./resolvers/Query')
 const Mutation = require('./resolvers/Mutation')
@@ -36,19 +36,17 @@ const server = new ApolloServer({
 		return {
 			...req,
 			prisma,
-			userID:
+			userId:
 				req && req.headers.authorization
 					?	getUserId(req)
+					:	null,
+			roleId:
+				req && req.headers.authorization
+					?	getUserRoleId(req)
 					:	null
 		}
 	}
 })
-
-// server
-// 	.listen()
-// 	.then(({ url }) =>
-// 		console.log(`Server is running on ${url}`)
-// 	);
 
 const app = express();
 

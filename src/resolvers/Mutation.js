@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const { APP_SECRET, verifyUser} = require('../utils')
+const { APP_SECRET, verifyUser, verifyRolePermission} = require('../utils')
 
 async function signup(parent, args, context, info) {
     if (args.user.username === "")
@@ -34,7 +34,7 @@ async function signup(parent, args, context, info) {
         rating: user.Rating
     }
 
-    const token = jwt.sign({ userId: user.UserId }, APP_SECRET)
+    const token = jwt.sign({ userId: user.UserId, roleId: user.RoleId }, APP_SECRET)
 
     return {
         token: token,
@@ -60,7 +60,7 @@ async function login(parent, args, context, info) {
         rating: user.Rating
     }
 
-    const token = jwt.sign({ userId: user.UserId }, APP_SECRET)
+    const token = jwt.sign({ userId: user.UserId, roleId: user.RoleId }, APP_SECRET)
     
     return {
         token: token,
@@ -71,7 +71,7 @@ async function login(parent, args, context, info) {
 async function createComment(parent, args, context, info) {
     
     if (!verifyUser(context.userId, args.comment.userId))
-        throw new Error("Access Denied! Unauthenticated user for this action!")
+        throw new Error("Access Denied! User does not have authorization for this action!")
 
     const comment = await context.prisma.comment.findFirst({
         where: {
@@ -114,7 +114,9 @@ async function createComment(parent, args, context, info) {
     const retComment = {
         id: createdComment.CommentId,
         content: createdComment.Content,
-        created: createdComment.DateCreated
+        created: createdComment.DateCreated,
+        userId: createdComment.CommentedUserId,
+        testId: createdComment.InTestId
     }
 
     return retComment
@@ -122,6 +124,32 @@ async function createComment(parent, args, context, info) {
 
 async function deleteComment(parent, args, context, info) {
 
+    const comment = await context.prisma.comment.findUnique({
+        where: {
+            CommentId: args.commentId
+        }
+    })
+
+    if (comment === null)
+        throw new Error("Comment does not exists!")
+
+    if (!verifyUser(context.userId, comment.CommentedUserId) && !verifyRolePermission(context.roleId, comment.CommentedUserId))
+        throw new Error("Access Denied! Unauthenticated user for this action!")
+
+    await context.prisma.comment.delete({
+        where: {
+            CommentId: args.commentId
+        }
+    })
+
+    const retComment = {
+        id: comment.CommentId,
+        content: comment.Content,
+        created: comment.DateCreated,
+        userId: comment.CommentedUserId,
+        testId: comment.InTestId
+    }
+    return retComment
 }
 
 async function addTest(parent, args, context, info) {
