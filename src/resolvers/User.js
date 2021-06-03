@@ -38,7 +38,7 @@ async function comments(parent, args, context, info) {
             UserId: parent.id
         },
         select: {
-            comment: {
+            Comment: {
                 select: {
                     CommentId: true,
                     Content: true,
@@ -49,7 +49,7 @@ async function comments(parent, args, context, info) {
     })
 
 
-    const retComments = userComments.comment.map(comment => {
+    const retComments = userComments.Comment.map(comment => {
         return {
             id: comment.CommentId,
             user: parent,
@@ -67,25 +67,27 @@ async function doneTests(parent, args, context, info) {
             UserId: parent.id
         },
         select: {
-            hasdone: {
+            HasDone: {
                 select: {
-                    test: {
+                    Test: {
                         select: {
                             TestId: true,
                             TestType: true,
                             Title: true,
-                            ListOfSectionIds: true
                         }
                     },
-                    TestHistory: true
                 }
             }
         }
     })
 
-    console.log(doneTests)
-    
-    const retTest = []
+    const retTest = doneTests.HasDone.map(testRecord => {
+        return {
+            id: testRecord.Test.TestId,
+            title: testRecord.Test.Title,
+            type: testRecord.Test.TestType
+        }
+    }) 
     return retTest
 }
 
