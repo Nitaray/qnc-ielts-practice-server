@@ -7,77 +7,115 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  UserId   Int       @id @default(autoincrement())
-  Username String    @unique
-  Fullname String
-  Password String
-  Rating   Int
-  RoleId   Int
-  role     role      @relation(fields: [RoleId], references: [RoleId])
-  comment  comment[]
-  hasdone  hasdone[]
+model Answer {
+  AnswerId         Int                @id @default(autoincrement())
+  AnswerText       String
+  AnswerHistory    AnswerHistory[]
+  AnswerOfQuestion AnswerOfQuestion[]
 }
 
-model answer {
-  AnswerId   Int    @id @default(autoincrement())
-  AnswerText String
+model AnswerHistory {
+  UserId       Int
+  QuestionId   Int
+  UserAnswerId Int
+  Question     Question @relation(fields: [QuestionId], references: [QuestionId])
+  Answer       Answer   @relation(fields: [UserAnswerId], references: [AnswerId])
+  User         User     @relation(fields: [UserId], references: [UserId])
+
+  @@id([UserId, QuestionId])
 }
 
-model comment {
+model AnswerOfQuestion {
+  AnswerId   Int
+  QuestionId Int
+  IsCorrect  Boolean
+  Answer     Answer   @relation(fields: [AnswerId], references: [AnswerId])
+  Question   Question @relation(fields: [QuestionId], references: [QuestionId])
+
+  @@id([AnswerId, QuestionId])
+}
+
+model Comment {
   CommentId       Int      @id @default(autoincrement())
   Content         String
-  DateCreated     DateTime @default(dbgenerated("CURRENT_DATE")) @db.Date
+  DateCreated     DateTime @default(now()) @db.Date
   CommentedUserId Int
+  InTestId        Int
   User            User     @relation(fields: [CommentedUserId], references: [UserId])
+  Test            Test     @relation(fields: [InTestId], references: [TestId])
 }
 
-model hasdone {
+model HasDone {
   UserId         Int
   TestId         Int
-  CompletionDate DateTime @db.Date
-  TestHistory    String
-  test           test     @relation(fields: [TestId], references: [TestId])
+  CompletionDate DateTime @default(now()) @db.Date
+  Test           Test     @relation(fields: [TestId], references: [TestId])
   User           User     @relation(fields: [UserId], references: [UserId])
 
   @@id([UserId, TestId])
 }
 
-model question {
-  QuestionId      Int    @id @default(autoincrement())
-  QuestionType    String
-  Statement       String
-  ListOfAnswerIds String
-  CorrentAnswerId Int
+model Question {
+  QuestionId       Int                @id @default(autoincrement())
+  QuestionType     String
+  Statement        String
+  AnswerHistory    AnswerHistory[]
+  AnswerOfQuestion AnswerOfQuestion[]
+  QuestionInGroup  QuestionInGroup[]
 }
 
-model questiongroup {
-  QuestionGroupId Int         @id @default(autoincrement())
-  QuestionRange   String
+model QuestionGroup {
+  QuestionGroupId Int               @id @default(autoincrement())
   IntroText       String
   TestSectionId   Int
-  testsection     testsection @relation(fields: [TestSectionId], references: [TestSectionId])
+  TestSection     TestSection       @relation(fields: [TestSectionId], references: [TestSectionId])
+  QuestionInGroup QuestionInGroup[]
 }
 
-model role {
+model QuestionInGroup {
+  QuestionGroupId   Int
+  QuestionId        Int
+  QuestionNumbering Int
+  QuestionGroup     QuestionGroup @relation(fields: [QuestionGroupId], references: [QuestionGroupId])
+  Question          Question      @relation(fields: [QuestionId], references: [QuestionId])
+
+  @@id([QuestionGroupId, QuestionId])
+}
+
+model Role {
   RoleId   Int    @id @default(autoincrement())
   RoleName String
   User     User[]
 }
 
-model test {
-  TestId           Int       @id @default(autoincrement())
-  TestType         String
-  ListOfSectionIds String
-  Title            String    @unique
-  hasdone          hasdone[]
+model Test {
+  TestId      Int           @id @default(autoincrement())
+  TestType    String
+  Title       String        @unique
+  Comment     Comment[]
+  HasDone     HasDone[]
+  TestSection TestSection[]
 }
 
-model testsection {
-  TestSectionId     Int             @id @default(autoincrement())
-  TestSectionType   String
-  StatementText     String?
-  StatementAudio    Bytes?
-  ListOfQuestionIds String
-  questiongroup     questiongroup[]
+model TestSection {
+  TestSectionId   Int             @id @default(autoincrement())
+  TestSectionType String
+  StatementText   String?
+  StatementAudio  Bytes?
+  TestId          Int
+  Test            Test            @relation(fields: [TestId], references: [TestId])
+  QuestionGroup   QuestionGroup[]
+}
+
+model User {
+  UserId        Int             @id @default(autoincrement())
+  Username      String          @unique
+  Fullname      String
+  Password      String
+  Rating        Int
+  RoleId        Int
+  Role          Role            @relation(fields: [RoleId], references: [RoleId])
+  AnswerHistory AnswerHistory[]
+  Comment       Comment[]
+  HasDone       HasDone[]
 }
