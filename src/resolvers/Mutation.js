@@ -105,7 +105,7 @@ async function createComment(parent, args, context, info) {
         content: createdComment.Content,
         created: createdComment.DateCreated
     }
-    
+
     return retComment
 }
 
