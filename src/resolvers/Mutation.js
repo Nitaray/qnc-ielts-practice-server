@@ -183,7 +183,27 @@ async function addTest(parent, args, context, info) {
 }
 
 async function changeName(parent, args, context, info) {
+    if (!verifyUser(context.userId, args.userId))
+        throw new Error("Not authenticated for this action!")
     
+    const updatedUser = await context.prisma.user.update({
+        where: {
+            UserId: args.userId
+        },
+        data: {
+            Fullname: args.newName
+        }
+    })
+
+    if (updatedUser === null)
+        throw new Error('User does not exist')
+    
+    return {
+        id: updatedUser.UserId,
+        username: updatedUser.Username,
+        fullname: updatedUser.Fullname,
+        rating: updatedUser.Rating
+    }
 }
 
 module.exports = {
