@@ -3,10 +3,8 @@ type Query {
 	getUserById(id: Int!):						User
 
 	allTests:									[Test!]!
-	getTestById(id: Int!):						Test
+	getTestById(id: Int!):						Test!
 	getTestResult(userId: Int!, testId: Int!): 	TestResult!
-
-	
 }
 
 type Mutation {
@@ -73,7 +71,7 @@ input TestSubmission {
 type TestResult {
 	test:				Test!
 	score:				Float!
-	answerHistory:		
+	answerHistory:		[AnsweredQuestion!]!
 }
 
 type TestSection {
@@ -108,7 +106,7 @@ input QuestionAnswerInput {
 
 type AnsweredQuestion {
 	question:			Question!
-	correctAnswer:		Answer!
+	answer:				Answer!
 }
 
 type Answer {

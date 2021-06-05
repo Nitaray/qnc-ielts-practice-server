@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const { APP_SECRET, verifyUser, verifyRolePermission} = require('../utils')
+const { APP_SECRET, verifyUser, verifyRolePermission} = require('../utils/auth')
 
 const ADD_TEST_PERM = process.env.ADD_TEST_PERM || 3
 
@@ -182,6 +182,10 @@ async function addTest(parent, args, context, info) {
     }
 }
 
+async function submitTest(parent, args, context, info) {
+
+}
+
 async function changeName(parent, args, context, info) {
     if (!verifyUser(context.userId, args.userId))
         throw new Error("Not authenticated for this action!")
@@ -196,7 +200,7 @@ async function changeName(parent, args, context, info) {
     })
 
     if (updatedUser === null)
-        throw new Error('User does not exist')
+        throw new Error('User does not exist!')
     
     return {
         id: updatedUser.UserId,
@@ -212,5 +216,6 @@ module.exports = {
     createComment,
     deleteComment,
     addTest,
+    submitTest,
     changeName
 }

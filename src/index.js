@@ -5,7 +5,7 @@ const express = require('express')
 const fs = require('fs')
 const path = require('path')
 
-const { getUserId, getUserRoleId } = require('./utils')
+const { getUserId, getUserRoleId } = require('./utils/jwt')
 
 const Query = require('./resolvers/Query')
 const Mutation = require('./resolvers/Mutation')
