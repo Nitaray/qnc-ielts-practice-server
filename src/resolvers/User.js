@@ -54,7 +54,8 @@ async function comments(parent, args, context, info) {
             id: comment.CommentId,
             user: parent,
             content: comment.Content,
-            created: comment.DateCreated
+            created: comment.DateCreated,
+            userId: parent.id
         }
     })
 
