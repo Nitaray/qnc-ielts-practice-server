@@ -1,9 +1,12 @@
 type Query {
-	allTests:			[Test!]!
-	test(id: Int!):		Test
+	allUsers:									[User!]!
+	getUserById(id: Int!):						User
 
-	allUsers:			[User!]!
-	user(id: Int!):		User
+	allTests:									[Test!]!
+	getTestById(id: Int!):						Test
+	getTestResult(userId: Int!, testId: Int!): 	TestResult!
+
+	
 }
 
 type Mutation {
@@ -14,6 +17,7 @@ type Mutation {
 	deleteComment(commentId: Int!):                 Comment!
 
 	addTest(test: TestInput!):                      Test!
+	submitTest(testSubmission: TestSubmission!):	TestResult!
 
 	changeName(userId: Int!, newName: String!):		User! 
 } 
@@ -61,6 +65,17 @@ input TestInput {
 	type:				String!
 }
 
+input TestSubmission {
+	testId:				Int!
+	answers:			[QuestionAnswerInput!]!
+}
+
+type TestResult {
+	test:				Test!
+	score:				Float!
+	answerHistory:		
+}
+
 type TestSection {
 	id:                 Int!
 	order:				Int!
@@ -83,6 +98,17 @@ type QuestionGroup {
 	order:				Int!
 	introText:          String!
 	questions:          [Question!]!
+}
+
+input QuestionAnswerInput {			
+	questionId:			Int!
+	answerId:			Int				# Use if is multiple choice or TF
+	answerString:		String			# Use if FiTB
+}
+
+type AnsweredQuestion {
+	question:			Question!
+	correctAnswer:		Answer!
 }
 
 type Answer {
