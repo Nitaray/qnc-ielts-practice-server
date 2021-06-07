@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const { APP_SECRET, verifyUser, verifyRolePermission} = require('../utils/auth')
+const { verifyUser, verifyRolePermission} = require('../utils/auth')
+const { APP_SECRET } = require('../utils/jwt')
 
 const ADD_TEST_PERM = process.env.ADD_TEST_PERM || 3
 
