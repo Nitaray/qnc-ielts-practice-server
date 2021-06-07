@@ -1,9 +1,13 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const { verifyUser, verifyRolePermission} = require('../utils/auth')
+const { v4: uuid } = require('uuid')
+
+const { verifyUser, verifyRolePermission, refreshTokens } = require('../utils/auth')
 const { APP_SECRET } = require('../utils/jwt')
 
 const ADD_TEST_PERM = process.env.ADD_TEST_PERM || 3
+const REFRESH_TOKEN_EXPIRY = process.env.REFRESH_TOKEN_EXPIRY || 30 * 24 * 60
+const JWT_EXPIRY = process.env.JWT_EXPIRY || 15
 
 async function signup(parent, args, context, info) {
     if (args.user.username === "")
@@ -37,7 +41,22 @@ async function signup(parent, args, context, info) {
         rating: user.Rating
     }
 
-    const token = jwt.sign({ userId: user.UserId, roleId: user.RoleId }, APP_SECRET)
+    refrToken = uuid()
+
+    refreshTokens.set(refrToken, {
+        uid: user.UserId,
+        expiry: new Date().getTime() + REFRESH_TOKEN_EXPIRY * 60 * 1000
+    })
+    context.res.cookie('refresh_token', refrToken, { httpOnly: true, maxAge: REFRESH_TOKEN_EXPIRY * 60 * 1000 })
+    
+    const token = jwt.sign(
+        { 
+            userId: user.UserId, 
+            roleId: user.RoleId 
+        }, APP_SECRET,
+        {
+            expiresIn: JWT_EXPIRY * 60 * 1000
+        })
 
     return {
         token: token,
@@ -63,10 +82,85 @@ async function login(parent, args, context, info) {
         rating: user.Rating
     }
 
-    const token = jwt.sign({ userId: user.UserId, roleId: user.RoleId }, APP_SECRET)
+    refrToken = uuid()
+
+    refreshTokens.set(refrToken, {
+        uid: user.UserId,
+        expiry: new Date().getTime() + REFRESH_TOKEN_EXPIRY * 60 * 1000
+    })
+    context.res.cookie('refresh_token', refrToken, { httpOnly: true, maxAge: REFRESH_TOKEN_EXPIRY * 60 * 1000 })
+    
+    const token = jwt.sign(
+        { 
+            userId: user.UserId, 
+            roleId: user.RoleId 
+        }, APP_SECRET, 
+        {
+            expiresIn: JWT_EXPIRY * 60 * 1000
+        })
     
     return {
         token: token,
+        user: retUser
+    }
+}
+
+async function refreshJWT(parent, args, context, info) {
+    cookies = context.req.cookies
+    if (!cookies)
+        throw new Error('Cookies not found! Please login!')
+
+    refrToken = context.req.cookies['refresh_token']
+    if (!refrToken || !refreshTokens.has(refrToken))
+        throw new Error('Refresh token does not exist or expired! Please login!')
+    
+    refrTokenData = refreshTokens.get(refrToken)
+    
+    expiresDate = refrTokenData.expiry
+    if (new Date().getTime() > expiresDate) {
+        refreshTokens.delete(refrToken)
+        throw new Error('Refresh token does not exist of expired! Please login!')
+    }
+    
+    userId = refrTokenData.uid
+    const user = await context.prisma.user.findUnique({
+        where: {
+            UserId: userId
+        }
+    })
+
+    if (user === null)
+        throw new Error('User does not exist!')
+
+    refreshTokens.delete(refrToken)
+
+    refrToken = uuid()
+
+    refreshTokens.set(refrToken, {
+        uid: user.UserId,
+        expiry: new Date().getTime() + REFRESH_TOKEN_EXPIRY * 60 * 1000
+    })
+    context.res.cookie('refresh_token', refrToken, { httpOnly: true, maxAge: REFRESH_TOKEN_EXPIRY * 60 * 1000 })
+
+    const jwtToken = jwt.sign(
+        {
+            userId: user.UserId,
+            roleId: user.RoleId
+        }, APP_SECRET, 
+        {
+            expiresIn: JWT_EXPIRY * 60 * 1000
+        }
+    )
+
+    const retUser = {
+        id: user.UserId,
+        username: user.Username,
+        fullname: user.Fullname,
+        rating: user.Rating
+    }
+
+    return {
+        token: jwtToken,
         user: retUser
     }
 }
@@ -214,6 +308,7 @@ async function changeName(parent, args, context, info) {
 module.exports = {
     signup,
     login,
+    refreshJWT,
     createComment,
     deleteComment,
     addTest,

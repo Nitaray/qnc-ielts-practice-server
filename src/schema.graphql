@@ -8,8 +8,10 @@ type Query {
 }
 
 type Mutation {
-	signup(user: UserInput!): 						AuthPayload
-	login(username: String!, password: String!):    AuthPayload
+	signup(user: UserInput!): 						AuthPayload!
+	login(username: String!, password: String!):    AuthPayload!
+
+	refreshJWT:										AuthPayload!
 
 	createComment(comment: CommentInput!):			Comment!	
 	deleteComment(commentId: Int!):                 Comment!

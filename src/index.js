@@ -32,9 +32,10 @@ const server = new ApolloServer({
 		'utf-8'
 	),
 	resolvers,
-	context: ({req}) => {
+	context: ({req, res}) => {
 		return {
 			...req,
+			...res,
 			prisma,
 			userId:
 				req && req.headers.authorization
@@ -49,6 +50,9 @@ const server = new ApolloServer({
 })
 
 const app = express();
+
+const cookieParser = require('cookie-parser')
+app.use(cookieParser())
 
 // CORS configuration
 const corsOptions = {
