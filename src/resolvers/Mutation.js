@@ -110,6 +110,7 @@ async function refreshJWT(parent, args, context, info) {
     if (!cookies)
         throw new Error('Cookies not found! Please login!')
 
+    console.log("Cookies: ")
     console.log(cookies)
 
     refrToken = context.req.cookies['refresh_token']

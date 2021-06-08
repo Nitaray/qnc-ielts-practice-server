@@ -50,6 +50,7 @@ const server = new ApolloServer({
 })
 
 const app = express();
+app.disable('x-powered-by')
 
 const cookieParser = require('cookie-parser')
 app.use(cookieParser())
