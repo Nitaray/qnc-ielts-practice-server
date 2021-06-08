@@ -47,7 +47,12 @@ async function signup(parent, args, context, info) {
         uid: user.UserId,
         expiry: new Date().getTime() + REFRESH_TOKEN_EXPIRY * 60 * 1000
     })
-    context.res.cookie('refresh_token', refrToken, { httpOnly: true, maxAge: REFRESH_TOKEN_EXPIRY * 60 * 1000 })
+    context.res.cookie('refresh_token', refrToken, { 
+        httpOnly: true, 
+        maxAge: REFRESH_TOKEN_EXPIRY * 60 * 1000,
+        secure: true,
+        sameSite: 'None' 
+    })
     
     const token = jwt.sign(
         { 
@@ -88,7 +93,12 @@ async function login(parent, args, context, info) {
         uid: user.UserId,
         expiry: new Date().getTime() + REFRESH_TOKEN_EXPIRY * 60 * 1000
     })
-    context.res.cookie('refresh_token', refrToken, { httpOnly: true, maxAge: REFRESH_TOKEN_EXPIRY * 60 * 1000 })
+    context.res.cookie('refresh_token', refrToken, { 
+        httpOnly: true, 
+        maxAge: REFRESH_TOKEN_EXPIRY * 60 * 1000,
+        secure: true,
+        sameSite: 'None'
+    })
     
     const token = jwt.sign(
         { 
@@ -143,7 +153,12 @@ async function refreshJWT(parent, args, context, info) {
         uid: user.UserId,
         expiry: new Date().getTime() + REFRESH_TOKEN_EXPIRY * 60 * 1000
     })
-    context.res.cookie('refresh_token', refrToken, { httpOnly: true, maxAge: REFRESH_TOKEN_EXPIRY * 60 * 1000 })
+    context.res.cookie('refresh_token', refrToken, { 
+        httpOnly: true, 
+        maxAge: REFRESH_TOKEN_EXPIRY * 60 * 1000,
+        secure: true,
+        sameSite: 'None'
+    })
 
     const jwtToken = jwt.sign(
         {
