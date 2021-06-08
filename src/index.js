@@ -58,7 +58,8 @@ app.use(cookieParser())
 // CORS configuration
 const corsOptions = {
 	origin: process.env.CLIENT_ORIGIN || 'http://localhost:3000',
-	credentials: true
+	credentials: true,
+	allowedHeaders: ['Content-Type', 'Authorization']
 }
 
 const PORT = process.env.PORT || 4000;
