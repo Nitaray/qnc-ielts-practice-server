@@ -110,6 +110,8 @@ async function refreshJWT(parent, args, context, info) {
     if (!cookies)
         throw new Error('Cookies not found! Please login!')
 
+    console.log(cookies)
+
     refrToken = context.req.cookies['refresh_token']
     if (!refrToken || !refreshTokens.has(refrToken))
         throw new Error('Refresh token does not exist or expired! Please login!')
