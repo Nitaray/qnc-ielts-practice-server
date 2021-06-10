@@ -17,6 +17,7 @@ type Mutation {
 	deleteComment(commentId: Int!):					Comment!
 
 	addTest(test: TestInput!):						Test!
+	startTest(testId: Int!, userId: Int!)			Test!
 	submitTest(testSubmission: TestSubmission!):	TestResult!
 
 	changeName(userId: Int!, newName: String!):		User!

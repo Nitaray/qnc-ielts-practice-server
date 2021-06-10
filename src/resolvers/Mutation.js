@@ -288,6 +288,10 @@ async function addTest(parent, args, context, info) {
     }
 }
 
+async function startTest(parent, args, context, info) {
+    
+}
+
 async function submitTest(parent, args, context, info) {
 
 }
