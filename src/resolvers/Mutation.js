@@ -227,8 +227,6 @@ async function createComment(parent, args, context, info) {
         id: createdComment.CommentId,
         content: createdComment.Content,
         created: createdComment.DateCreated,
-        userId: createdComment.CommentedUserId,
-        testId: createdComment.InTestId
     }
 
     return retComment
@@ -258,8 +256,6 @@ async function deleteComment(parent, args, context, info) {
         id: comment.CommentId,
         content: comment.Content,
         created: comment.DateCreated,
-        userId: comment.CommentedUserId,
-        testId: comment.InTestId
     }
     return retComment
 }

@@ -11,15 +11,19 @@ function created(parent, args, context, info) {
 }
 
 async function user(parent, args, context, info) {
-    const commentUser = await context.prisma.user.findUnique({
+    const commentUser = await context.prisma.comment.findUnique({
         where: {
-            UserId: parent.userId
+            CommentId: parent.id
         },
         select: {
-            UserId: true,
-            Username: true,
-            Fullname: true,
-            Rating: true,
+            User: {
+                select: {
+                    UserId: true,
+                    Username: true,
+                    Fullname: true,
+                    Rating: true,
+                }
+            }
         }
     })
 
@@ -27,10 +31,10 @@ async function user(parent, args, context, info) {
         throw new Error('User does not exists!')
     
     return {
-        id: commentUser.UserId,
-        username: commentUser.Username,
-        fullname: commentUser.Fullname,
-        rating: commentUser.Rating
+        id: commentUser.User.UserId,
+        username: commentUser.User.Username,
+        fullname: commentUser.User.Fullname,
+        rating: commentUser.User.Rating
     }
 }
 

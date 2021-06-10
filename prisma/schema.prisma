@@ -101,7 +101,7 @@ model TestSection {
   TestSectionId   Int             @id @default(autoincrement())
   TestSectionType String
   StatementText   String?
-  StatementAudio  Bytes?
+  StatementAudio  String?
   TestId          Int
   Test            Test            @relation(fields: [TestId], references: [TestId])
   QuestionGroup   QuestionGroup[]
