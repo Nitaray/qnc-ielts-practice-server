@@ -1,44 +1,44 @@
 type Query {
-	allUsers:									[User!]!
-	getUserById(id: Int!):						User
+	allUsers:										[User!]!
+	getUserById(id: Int!):							User
 
-	allTests:									[Test!]!
-	getTestById(id: Int!):						Test!
-	getTestResult(userId: Int!, testId: Int!): 	TestResult!
+	allTests:										[Test!]!
+	getTestById(id: Int!):							Test!
+	getTestResult(userId: Int!, testId: Int!): 		TestResult
 }
 
 type Mutation {
 	signup(user: UserInput!): 						AuthPayload!
-	login(username: String!, password: String!):    AuthPayload!
+	login(username: String!, password: String!):	AuthPayload!
 
 	refreshJWT:										AuthPayload!
 
 	createComment(comment: CommentInput!):			Comment!	
-	deleteComment(commentId: Int!):                 Comment!
+	deleteComment(commentId: Int!):					Comment!
 
-	addTest(test: TestInput!):                      Test!
+	addTest(test: TestInput!):						Test!
 	submitTest(testSubmission: TestSubmission!):	TestResult!
 
-	changeName(userId: Int!, newName: String!):		User! 
-} 
+	changeName(userId: Int!, newName: String!):		User!
+}
 
 type AuthPayload {
-	token:              String!
-	user:               User!
+	token:				String!
+	user:				User!
 }
 
 type User {
-	id:                 Int!
-	username:           String!
-	fullname:           String
-	role:               Role
-	rating:             Int!
-	comments:           [Comment!]
-	doneTests:          [Test!]
+	id:					Int!
+	username:			String!
+	fullname:			String
+	role:				Role
+	rating:				Int!
+	comments:			[Comment!]
+	doneTests:			[Test!]
 }
 
 input UserInput {
-	username: 			String!
+	username:			String!
 	password:			String!
 	name:				String
 }
@@ -48,16 +48,16 @@ fragment personalInfo on User {
 }
 
 type Role {
-	id:                 Int!
-	name:               String!
+	id:					Int!
+	name:				String!
 }
 
 type Test {
-	id:                 Int!
+	id:					Int!
 	title:				String!
-	type:               String!
-	sections:           [TestSection!]!
-	comments:           [Comment!]
+	type:				String!
+	sections:			[TestSection!]!
+	comments:			[Comment!]
 }
 
 input TestInput {
@@ -77,27 +77,27 @@ type TestResult {
 }
 
 type TestSection {
-	id:                 Int!
+	id:					Int!
 	order:				Int!
-	type:               String!
-	statementText:      String
-	statementAudio:     String
-	questionList:       [QuestionGroup!]!
+	type:				String!
+	statementText:		String
+	statementAudio:		String
+	questionList:		[QuestionGroup!]!
 }
 
 type Question {
-	id:                 Int!
+	id:					Int!
 	order:				Int!
-	type:               String!
-	statementText:      String!
-	answers:            [Answer!]
+	type:				String!
+	statementText:		String!
+	answers:			[Answer!]
 }
 
 type QuestionGroup {
-	id:                 Int!
+	id:					Int!
 	order:				Int!
-	introText:          String!
-	questions:          [Question!]!
+	introText:			String!
+	questions:			[Question!]!
 }
 
 input QuestionAnswerInput {			
@@ -112,16 +112,16 @@ type AnsweredQuestion {
 }
 
 type Answer {
-	id:                 Int!
-	text:               String!
+	id:					Int!
+	text:				String!
 }
 
 type Comment {
-	id:                 Int!
-	user:               User!
+	id:					Int!
+	user:				User!
 	test:				Test!
-	content:            String!
-	created:            String!
+	content:			String!
+	created:			String!
 }
 
 input CommentInput {
