@@ -350,11 +350,37 @@ async function addQuestionGroup(parent, args, context, info) {
 }
 
 async function addQuestion(parent, args, context, info) {
-    // TODO Implement addQuestion
+	const group = await context.prisma.questiongroup.findUnique({
+		where: {
+			QuestionGroupId: args.question.questionGroupId
+		}
+	})
+
+	if (group === null)
+		throw new Error("Group does not exists!")
+
+	const order = group.QuestionInGroup.length + 1
+
+	const addedQuestion = await context.prisma.question.create({
+		data: {
+			QuestionType: args.question.type,
+			Statement: args.question.statementText
+		}
+	})
+
+	const retQuestion = {
+		id: addedQuestion.QuestionId,
+		order: order,
+		type: addedQuestion.QuestionType,
+		statementText: addedQuestion.Statement
+	}
+
+	return retQuestion
 }
 
 async function addAnswer(parent, args, context, info) {
     // TODO Implement addAnswer
+	
 }
 
 async function startTest(parent, args, context, info) {
