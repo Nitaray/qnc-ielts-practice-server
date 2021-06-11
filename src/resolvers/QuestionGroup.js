@@ -11,7 +11,7 @@ function introText(parent, args, context, info) {
 }
 
 async function questions(parent, args, context, info) {
-	const questions = await context.prisma.QuestionGroup.findUnique({
+	const questions = await context.prisma.questionGroup.findUnique({
 		where: {
 			QuestionGroupId: parent.id
 		},
@@ -31,7 +31,7 @@ async function questions(parent, args, context, info) {
 	})
 
 
-	const retQuestion = questions.QuestionInGroup.Question.map((question, index) => {
+	const retQuestion = questions.QuestionInGroup.map((question, index) => {
 		return {
 			id: question.QuestionId,
 			order: index,

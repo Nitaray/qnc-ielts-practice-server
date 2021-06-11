@@ -15,15 +15,14 @@ function statementText(parent, args, context, info) {
 }
 
 async function answers(parent, args, context, info) {
-	const answer = context.prisma.question.findUnique({
+	const answer = await context.prisma.question.findUnique({
 		where: {
 			QuestionId: parent.id
 		},
 		select: {
 			AnswerOfQuestion: {
 				select: {
-					AnswerId: true,
-					AnswerText: true,
+					Answer: true
 				}
 			}
 		}
@@ -31,8 +30,8 @@ async function answers(parent, args, context, info) {
 
 	const retAnswer = answer.AnswerOfQuestion.map(answer => {
 		return {
-			id: answer.AnswerId,
-			text: answer.AnswerText
+			id: answer.Answer.AnswerId,
+			text: answer.Answer.AnswerText
 		}
 	})
 

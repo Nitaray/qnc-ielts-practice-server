@@ -19,7 +19,7 @@ function statementAudio(parent, args, context, info) {
 }
 
 async function questionGroups(parent, args, context, info) {
-	const questionGroups = await context.prisma.testsection.findUnique({
+	const questionGroups = await context.prisma.testSection.findUnique({
 		where: {
 			TestSectionId: parent.id	
 		},
