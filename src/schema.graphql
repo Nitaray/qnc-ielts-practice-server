@@ -17,6 +17,11 @@ type Mutation {
 	deleteComment(commentId: Int!):					Comment!
 
 	addTest(test: TestInput!):						Test!
+	addTestSection(section: TestSectionInput!):		TestSection!
+	addQuestionGroup(group: QuestionGroupInput!):	QuestionGroup!
+	addQuestion(question: QuestionInput!):			Question!
+	addAnswer(answer: AnswerInput!):				Answer!
+
 	startTest(testId: Int!, userId: Int!):			Test!
 	submitTest(testSubmission: TestSubmission!):	TestResult!
 
@@ -86,6 +91,13 @@ type TestSection {
 	questionList:		[QuestionGroup!]!
 }
 
+input TestSectionInput {
+	testId:				Int!
+	type:				String!
+	text:				String!
+	audio:				String
+}
+
 type Question {
 	id:					Int!
 	order:				Int!
@@ -94,11 +106,22 @@ type Question {
 	answers:			[Answer!]
 }
 
+input QuestionInput {
+	questionGroupId:	Int!
+	type:				String!
+	statementText:		String!
+}
+
 type QuestionGroup {
 	id:					Int!
 	order:				Int!
 	introText:			String!
 	questions:			[Question!]!
+}
+
+type QuestionGroupInput {
+	sectionId:			Int!
+	introText:			String!
 }
 
 input QuestionAnswerInput {			
@@ -115,6 +138,12 @@ type AnsweredQuestion {
 type Answer {
 	id:					Int!
 	text:				String!
+}
+
+input AnswerInput {
+	questionId:			Int!
+	text:				String!
+	isCorrect:			Boolean!
 }
 
 type Comment {

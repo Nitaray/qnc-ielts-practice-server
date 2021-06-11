@@ -288,12 +288,29 @@ async function addTest(parent, args, context, info) {
     }
 }
 
+async function addTestSection(parent, args, context, info) {
+    // TODO Implement addTestSection
+
+}
+
+async function addQuestionGroup(parent, args, context, info) {
+    // TODO Implement addQuestionGroup
+}
+
+async function addQuestion(parent, args, context, info) {
+    // TODO Implement addQuestion
+}
+
+async function addAnswer(parent, args, context, info) {
+    // TODO Implement addAnswer
+}
+
 async function startTest(parent, args, context, info) {
-    
+    // TODO Implement startTest
 }
 
 async function submitTest(parent, args, context, info) {
-
+    // TODO Implement submitTest
 }
 
 async function changeName(parent, args, context, info) {
@@ -327,6 +344,11 @@ module.exports = {
     createComment,
     deleteComment,
     addTest,
+    addTestSection,
+	addQuestionGroup,
+    addQuestion,
+    addAnswer,
+    startTest,
     submitTest,
     changeName
 }
