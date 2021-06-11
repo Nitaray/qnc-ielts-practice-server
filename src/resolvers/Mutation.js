@@ -316,10 +316,37 @@ async function addTestSection(parent, args, context, info) {
 		statementText: addedSection.StatementText,
 		statementAudio: addedSection.StatementAudio
 	}
+
+	return retSection
 }
 
 async function addQuestionGroup(parent, args, context, info) {
     // TODO Implement addQuestionGroup
+	const section = await context.prisma.testsection.findUnique({
+		where: {
+			TestSectionId: args.group.sectionId
+		}
+	})
+
+	if (section === null)
+		throw new Error("Section does not exists!")
+
+	const order = section.QuestionGroup.length + 1
+
+	const addedGroup = await context.prisma.questiongroup.create({
+		data: {
+			IntroText: args.group.introText,
+			TestSectionId: args.group.sectionId
+		}
+	})
+
+	const retGroup = {
+		id: addedGroup.QuestionGroupId,
+		order: order,
+		introText: addedSection.IntroText
+	}
+
+	return retGroup
 }
 
 async function addQuestion(parent, args, context, info) {
