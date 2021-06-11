@@ -289,8 +289,33 @@ async function addTest(parent, args, context, info) {
 }
 
 async function addTestSection(parent, args, context, info) {
-    // TODO Implement addTestSection
+	const test = await context.prisma.test.findUnique({
+		where: {
+			TestId: args.section.testId
+		}
+	})
 
+	if (test === null)
+		throw new Error("Test does not exists!")
+
+	const order = test.sections.length + 1
+
+	const addedSection = await context.prisma.testsection.create({
+		data: {
+			TestSectionType: args.section.type,
+			StatementText: args.section.text,
+			StatementAudio: args.section.audio,
+			TestId: args.section.testId
+		}
+	})
+
+	const retSection = {
+		id: addedSection.TestSectionId,
+		order: order,
+		type: addedSection.TestSectionType,
+		statementText: addedSection.StatementText,
+		statementAudio: addedSection.StatementAudio
+	}
 }
 
 async function addQuestionGroup(parent, args, context, info) {
