@@ -119,7 +119,7 @@ type QuestionGroup {
 	questions:			[Question!]!
 }
 
-type QuestionGroupInput {
+input QuestionGroupInput {
 	sectionId:			Int!
 	introText:			String!
 }
