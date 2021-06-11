@@ -379,8 +379,55 @@ async function addQuestion(parent, args, context, info) {
 }
 
 async function addAnswer(parent, args, context, info) {
-    // TODO Implement addAnswer
+	const question = await context.prisma.question.findUnique({
+		where: {
+			QuestionId: args.answer.questionId
+		}
+	})
+
+	if (question === null)
+		throw new Error("Question does not exists!")
+
+	const similarAnswer = await context.prisma.answer.findFirst({
+		where: {
+			AnswerText: args.answer.text
+		}
+	})
+
+	let answer = similarAnswer
+
+	if (answer === null) {
+		answer = await context.prisma.answer.create({
+			data: {
+				AnswerText: args.answer.text
+			}
+		})
+	}
+
+	let answerQuestionLink = await context.prisma.AnswerOfQuestion.findUnique({
+		where: {
+			AnswerId: answer.AnswerId,
+			QuestionId: args.answer.questionId
+		}
+	})
+
+	if (answerQuestionLink)
+		throw new Error("This answer is already assigned to this question.")
 	
+	answerQuestionLink = await context.prisma.AnswerOfQuestion.create({
+		data: {
+			AnswerId: answer.AnswerId,
+			QuestionId: args.answer.questionId,
+			IsCorrect: args.answer.isCorrect
+		}
+	})
+
+	const retAnswer = {
+		id: answer.AnswerId,
+		text: answer.AnswerText
+	}
+
+	return retAnswer
 }
 
 async function startTest(parent, args, context, info) {
