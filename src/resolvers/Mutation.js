@@ -298,7 +298,7 @@ async function addTestSection(parent, args, context, info) {
 	if (test === null)
 		throw new Error("Test does not exists!")
 
-	const order = test.sections.length + 1
+	const order = test.TestSection.length + 1
 
 	const addedSection = await context.prisma.testsection.create({
 		data: {
