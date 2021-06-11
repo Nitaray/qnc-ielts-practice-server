@@ -292,15 +292,20 @@ async function addTestSection(parent, args, context, info) {
 	const test = await context.prisma.test.findUnique({
 		where: {
 			TestId: args.section.testId
+		},
+		select: {
+			TestSection: true
 		}
 	})
 
 	if (test === null)
 		throw new Error("Test does not exists!")
 
+	console.log(test)
+
 	const order = test.TestSection.length + 1
 
-	const addedSection = await context.prisma.testsection.create({
+	const addedSection = await context.prisma.testSection.create({
 		data: {
 			TestSectionType: args.section.type,
 			StatementText: args.section.text,
@@ -321,10 +326,12 @@ async function addTestSection(parent, args, context, info) {
 }
 
 async function addQuestionGroup(parent, args, context, info) {
-    // TODO Implement addQuestionGroup
-	const section = await context.prisma.testsection.findUnique({
+	const section = await context.prisma.testSection.findUnique({
 		where: {
 			TestSectionId: args.group.sectionId
+		},
+		select: {
+			QuestionGroup: true
 		}
 	})
 
@@ -333,7 +340,7 @@ async function addQuestionGroup(parent, args, context, info) {
 
 	const order = section.QuestionGroup.length + 1
 
-	const addedGroup = await context.prisma.questiongroup.create({
+	const addedGroup = await context.prisma.questionGroup.create({
 		data: {
 			IntroText: args.group.introText,
 			TestSectionId: args.group.sectionId
@@ -343,16 +350,19 @@ async function addQuestionGroup(parent, args, context, info) {
 	const retGroup = {
 		id: addedGroup.QuestionGroupId,
 		order: order,
-		introText: addedSection.IntroText
+		introText: addedGroup.IntroText
 	}
 
 	return retGroup
 }
 
 async function addQuestion(parent, args, context, info) {
-	const group = await context.prisma.questiongroup.findUnique({
+	const group = await context.prisma.questionGroup.findUnique({
 		where: {
 			QuestionGroupId: args.question.questionGroupId
+		},
+		select: {
+			QuestionInGroup: true
 		}
 	})
 
@@ -404,17 +414,19 @@ async function addAnswer(parent, args, context, info) {
 		})
 	}
 
-	let answerQuestionLink = await context.prisma.AnswerOfQuestion.findUnique({
+	let answerQuestionLink = await context.prisma.answerOfQuestion.findUnique({
 		where: {
-			AnswerId: answer.AnswerId,
-			QuestionId: args.answer.questionId
+			AnswerId_QuestionId: {
+				AnswerId: answer.AnswerId,
+				QuestionId: args.answer.questionId
+			}
 		}
 	})
 
 	if (answerQuestionLink)
 		throw new Error("This answer is already assigned to this question.")
 	
-	answerQuestionLink = await context.prisma.AnswerOfQuestion.create({
+	answerQuestionLink = await context.prisma.answerOfQuestion.create({
 		data: {
 			AnswerId: answer.AnswerId,
 			QuestionId: args.answer.questionId,
