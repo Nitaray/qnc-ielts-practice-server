@@ -18,7 +18,7 @@ function statementAudio(parent, args, context, info) {
 	return parent.statementAudio
 }
 
-async function questionList(parent, args, context, info) {
+async function questionGroups(parent, args, context, info) {
 	const questionGroups = await context.prisma.testsection.findUnique({
 		where: {
 			TestSectionId: parent.id	
@@ -51,5 +51,5 @@ module.exports = {
 	type,
 	statementText,
 	statementAudio,
-	questionList
+	questionGroups
 }
