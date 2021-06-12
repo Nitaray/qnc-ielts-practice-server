@@ -132,7 +132,7 @@ input QuestionAnswerInput {
 
 type AnsweredQuestion {
 	question:			Question!
-	answer:				String!
+	answer:				Answer!
 }
 
 type Answer {
