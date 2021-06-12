@@ -1,3 +1,4 @@
+const { verifyUser, verifyRolePermission } = require('../utils/auth')
 const { MOD_PERM_LVL } = require('../utils/permission')
 
 async function allUsers(parent, args, context, info) {
