@@ -97,6 +97,9 @@ async function getTestResult(parent, args, context, info) {
 		select: {
 			Test: {
 				select: {
+					TestId: true,
+					TestType: true,
+					Title: true,
 					TestSection: {
 						select: {
 							QuestionGroup: {
@@ -159,15 +162,18 @@ async function getTestResult(parent, args, context, info) {
 			} : null
 		})
 
+		if (userQuestionHistory === null)
+			return
+
 		const answerOfQuestion = await context.prisma.answerOfQuestion.findUnique({
 			where: {
 				AnswerId_QuestionId: {
 					AnswerId: userQuestionHistory.Answer.AnswerId,
 					QuestionId: question.QuestionId
-				},
-				select: {
-					IsCorrect: true
 				}
+			},
+			select: {
+				IsCorrect: true
 			}
 		})
 
