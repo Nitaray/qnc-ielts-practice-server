@@ -2,12 +2,15 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { v4: uuid } = require('uuid')
 
-const { verifyUser, verifyRolePermission, refreshTokens } = require('../utils/auth')
+const { 
+    verifyUser, 
+    verifyRolePermission, 
+    refreshTokens, 
+    REFRESH_TOKEN_EXPIRY, 
+    JWT_EXPIRY 
+    } = require('../utils/auth')
 const { APP_SECRET } = require('../utils/jwt')
-
-const ADD_TEST_PERM = process.env.ADD_TEST_PERM || 3
-const REFRESH_TOKEN_EXPIRY = process.env.REFRESH_TOKEN_EXPIRY || 30 * 24 * 60
-const JWT_EXPIRY = process.env.JWT_EXPIRY || 15
+const { ADMIN_PERM_LVL } = require('../utils/permission')
 
 async function signup(parent, args, context, info) {
     if (args.user.username === "")
@@ -261,8 +264,8 @@ async function deleteComment(parent, args, context, info) {
 }
 
 async function addTest(parent, args, context, info) {
-    if (context.roleId < ADD_TEST_PERM)
-        throw new Error(`Access Denied! Only user with permission level ${ADD_TEST_PERM} or higher can add a Test`)
+    if (context.roleId < ADMIN_PERM_LVL)
+        throw new Error(`Access Denied! Only user with permission level ${ADMIN_PERM_LVL} or higher can add a Test`)
     
     const test = await context.prisma.test.findUnique({
         where: {
