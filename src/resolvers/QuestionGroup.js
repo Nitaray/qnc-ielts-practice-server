@@ -33,10 +33,10 @@ async function questions(parent, args, context, info) {
 
 	const retQuestion = questions.QuestionInGroup.map((question, index) => {
 		return {
-			id: question.QuestionId,
+			id: question.Question.QuestionId,
 			order: index + 1,
-			type: question.QuestionType,
-			statementText: question.Statement
+			type: question.Question.QuestionType,
+			statementText: question.Question.Statement
 		}
 	})
 
