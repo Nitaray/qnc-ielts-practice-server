@@ -132,7 +132,7 @@ async function getTestResult(parent, args, context, info) {
 
 	// TODO Optimize code
 	// It might be possible to query the answerHistory from the question query above.
-	questions.map((question, index) => {
+	questions.map(async (question, index) => {
 		const userQuestionHistory = await context.prisma.answerHistory.findUnique({
 			where: {
 				UserId_QuestionId: {
