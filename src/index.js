@@ -21,9 +21,7 @@ const prisma = new PrismaClient()
 
 
 const resolvers = {
-	Query: {
-
-	},
+	Query: Query,
 	Mutation: Mutation,
 	User: User,
 	Role: Role,
