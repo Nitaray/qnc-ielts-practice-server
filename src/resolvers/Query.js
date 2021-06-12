@@ -148,7 +148,7 @@ async function getTestResult(parent, args, context, info) {
 		answeredQuestionHistory.push({
 			question: {
 				id: question.QuestionId,
-				order: index,
+				order: index + 1,
 				type: question.QuestionType,
 				statementText: question.Statement
 			},

@@ -37,7 +37,7 @@ async function questionGroups(parent, args, context, info) {
 	const retQuestionGroups = questionGroups.QuestionGroup.map((group, index) => {
 		return {
 			id: group.QuestionGroupId,
-			order: index,
+			order: index + 1,
 			introText: group.IntroText
 		}
 	})
