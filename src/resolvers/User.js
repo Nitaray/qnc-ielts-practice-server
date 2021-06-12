@@ -1,3 +1,6 @@
+const { verifyUser, verifyRolePermission } = require("../utils/auth");
+const { MOD_PERM_LVL } = require("../utils/permission")
+
 function id(parent, args, context, info) {
     return parent.id;
 }
@@ -33,6 +36,9 @@ function rating(parent, args, context, info) {
 }
 
 async function comments(parent, args, context, info) {
+    if (!verifyUser(context.userId, parent.id) && !verifyRolePermission(context.roleId, MOD_PERM_LVL))
+        return []
+    
     const userComments = await context.prisma.user.findUnique({
         where: {
             UserId: parent.id
@@ -63,6 +69,9 @@ async function comments(parent, args, context, info) {
 }
 
 async function doneTests(parent, args, context, info) {
+    if (!verifyUser(context.userId, args.userId) && !verifyRolePermission(context.roleId, MOD_PERM_LVL))
+        return []
+
     const doneTests = await context.prisma.user.findUnique({
         where: {
             UserId: parent.id
