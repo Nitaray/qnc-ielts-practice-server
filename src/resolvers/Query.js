@@ -136,7 +136,7 @@ async function getTestResult(parent, args, context, info) {
 
 	// TODO Optimize code
 	// It might be possible to query the answerHistory from the question query above.
-	questions.map(async (question, index) => {
+	const requests = questions.map(async (question, index) => {
 		const userQuestionHistory = await context.prisma.answerHistory.findUnique({
 			where: {
 				UserId_QuestionId: {
@@ -180,15 +180,17 @@ async function getTestResult(parent, args, context, info) {
 		correctAnswers += answerOfQuestion.IsCorrect ? 1 : 0
 	})
 
-	return {
-		test: {
-			id: doneTest.Test.TestId,
-			title: doneTest.Test.Title,
-			type: doneTest.Test.TestType
-		},
-		score: correctAnswers / questions.length,
-		answerHistory: answeredQuestionHistory
-	}
+	return Promise.all(requests).then(() => {
+		return {
+			test: {
+				id: doneTest.Test.TestId,
+				title: doneTest.Test.Title,
+				type: doneTest.Test.TestType
+			},
+			score: correctAnswers / questions.length,
+			answerHistory: answeredQuestionHistory
+		}
+	})
 }
 
 module.exports = {
