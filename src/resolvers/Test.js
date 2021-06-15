@@ -22,6 +22,9 @@ async function sections(parent, args, context, info) {
 					TestSectionType: true,
 					StatementText: true,
 					StatementAudio: true,
+				},
+				orderBy: {
+					TestSectionId: 'asc'
 				}
 			}
 		}
