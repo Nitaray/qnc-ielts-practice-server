@@ -5,7 +5,6 @@ const { v4: uuid } = require('uuid')
 const { 
 	verifyUser, 
 	verifyRolePermission, 
-	refreshTokens, 
 	REFRESH_TOKEN_EXPIRY, 
 	JWT_EXPIRY 
 	} = require('../utils/auth')
@@ -46,9 +45,13 @@ async function signup(parent, args, context, info) {
 
 	refrToken = uuid()
 
-	refreshTokens.set(refrToken, {
-		uid: user.UserId,
-		expiry: new Date().getTime() + REFRESH_TOKEN_EXPIRY * 60 * 1000
+	await context.prisma.user.update({
+		data: {
+			RefreshToken: refrToken
+		},
+		where: {
+			UserId: user.UserId
+		}
 	})
 	context.res.cookie('refresh_token', refrToken, { 
 		httpOnly: true, 
@@ -92,9 +95,13 @@ async function login(parent, args, context, info) {
 
 	refrToken = uuid()
 
-	refreshTokens.set(refrToken, {
-		uid: user.UserId,
-		expiry: new Date().getTime() + REFRESH_TOKEN_EXPIRY * 60 * 1000
+	await context.prisma.user.update({
+		data: {
+			RefreshToken: refrToken
+		},
+		where: {
+			UserId: user.UserId
+		}
 	})
 	context.res.cookie('refresh_token', refrToken, { 
 		httpOnly: true, 
@@ -124,34 +131,27 @@ async function refreshJWT(parent, args, context, info) {
 		throw new Error('Cookies not found! Please login!')
 
 	refrToken = context.req.cookies['refresh_token']
-	if (!refrToken || !refreshTokens.has(refrToken))
-		throw new Error('Refresh token does not exist or expired! Please login!')
+	if (!refrToken)
+		throw new Error('No refresh token found! Please login!')
 	
-	refrTokenData = refreshTokens.get(refrToken)
-	
-	expiresDate = refrTokenData.expiry
-	if (new Date().getTime() > expiresDate) {
-		refreshTokens.delete(refrToken)
-		throw new Error('Refresh token does not exist of expired! Please login!')
-	}
-	
-	userId = refrTokenData.uid
-	const user = await context.prisma.user.findUnique({
+	const user = await context.prisma.user.findFirst({
 		where: {
-			UserId: userId
+			RefreshToken: refrToken
 		}
 	})
 
 	if (user === null)
-		throw new Error('User does not exist!')
-
-	refreshTokens.delete(refrToken)
+		throw new Error('Refresh token expired or does not exists! Please login!')
 
 	refrToken = uuid()
 
-	refreshTokens.set(refrToken, {
-		uid: user.UserId,
-		expiry: new Date().getTime() + REFRESH_TOKEN_EXPIRY * 60 * 1000
+	await context.prisma.user.update({
+		data: {
+			RefreshToken: refrToken
+		},
+		where: {
+			UserId: user.UserId
+		}
 	})
 	context.res.cookie('refresh_token', refrToken, { 
 		httpOnly: true, 

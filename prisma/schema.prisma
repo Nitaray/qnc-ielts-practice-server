@@ -101,8 +101,8 @@ model TestSection {
   TestSectionId   Int             @id @default(autoincrement())
   TestSectionType String
   StatementText   String?
-  StatementAudio  String?
   TestId          Int
+  StatementAudio  String?
   Test            Test            @relation(fields: [TestId], references: [TestId])
   QuestionGroup   QuestionGroup[]
 }
@@ -114,6 +114,7 @@ model User {
   Password      String
   Rating        Int
   RoleId        Int
+  RefreshToken  String?         @db.Uuid
   Role          Role            @relation(fields: [RoleId], references: [RoleId])
   AnswerHistory AnswerHistory[]
   Comment       Comment[]
