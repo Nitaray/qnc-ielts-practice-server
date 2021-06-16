@@ -9,7 +9,7 @@ const {
 	JWT_EXPIRY 
 	} = require('../utils/auth')
 const { APP_SECRET } = require('../utils/jwt')
-const { ADMIN_PERM_LVL } = require('../utils/permission')
+const { ADMIN_PERM_LVL, TEST_TIME_LIMIT, TEST_TIME_LIMIT_LAX } = require('../utils/config')
 
 async function signup(parent, args, context, info) {
 	if (args.user.username === "")
@@ -487,7 +487,27 @@ async function startTest(parent, args, context, info) {
 }
 
 async function submitTest(parent, args, context, info) {
-	// TODO Implement submitTest
+	submission = args.testSubmission
+
+	if (!verifyUser(context.userId, submission.userId))
+		throw new Error('User unauthenticated for this request!')
+
+	const testHistory = await context.prisma.hasDone.findUnique({
+		where: {
+			UserId_TestId: {
+				UserId: submission.userId,
+				TestId: submission.testId
+			}
+		}
+	})
+
+	if (testHistory === null)
+		throw new Error('User has not started this test yet!')
+
+	if (new Date().getTime() - testHistory.StartTime > (TEST_TIME_LIMIT + TEST_TIME_LIMIT_LAX) * 60 * 1000)
+		throw new Error('Test submission failed due to test time limit exceeded!')
+
+	// TODO Finish implementation of submitTest
 }
 
 async function changeName(parent, args, context, info) {

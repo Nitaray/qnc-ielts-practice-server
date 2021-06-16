@@ -73,6 +73,7 @@ input TestInput {
 
 input TestSubmission {
 	testId:				Int!
+	userId:				Int!
 	answers:			[QuestionAnswerInput!]!
 }
 
