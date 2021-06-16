@@ -446,7 +446,44 @@ async function addAnswer(parent, args, context, info) {
 }
 
 async function startTest(parent, args, context, info) {
-	// TODO Implement startTest
+	if (!verifyUser(context.userId, args.userId))
+		throw new Error('User unauthenticated for this request!')
+
+	const testHistory = await context.prisma.hasDone.findUnique({
+		where: {
+			UserId_TestId: {
+				UserId: args.userId,
+				TestId: args.testId
+			}
+		}
+	})
+
+	if (testHistory)
+		throw new Error('User has already done this test!')
+
+	const test = await context.prisma.test.findUnique({
+		where: {
+			TestId: args.testId
+		}
+	})
+
+	if (test === null)
+		throw new Error("Test does not exists!")
+
+	await context.prisma.hasDone.create({
+		data: {
+			UserId: args.userId,
+			TestId: args.TestId,
+		}
+	})
+
+	const retTest = {
+		id: test.TestId,
+		title: test.Title,
+		type: test.TestType
+	}
+
+	return retTest
 }
 
 async function submitTest(parent, args, context, info) {
