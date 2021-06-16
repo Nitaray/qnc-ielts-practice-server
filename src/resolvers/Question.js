@@ -41,10 +41,50 @@ async function answers(parent, args, context, info) {
 	return retAnswer
 }
 
+async function trueAnswer(parent, args, context, info) {
+	const history = await context.prisma.answerHistory.findUnique({
+		where: {
+			UserId_QuestionId: {
+				UserId: context.userId,
+				QuestionId: parent.id
+			}
+		}
+	})
+
+	if (history === null)
+		throw new Error('User has not completed this question! Cannot request the answer!')
+
+	const answer = await context.prisma.question.findUnique({
+		where: {
+			QuestionId: parent.id
+		},
+		select: {
+			AnswerOfQuestion: {
+				select: {
+					Answer: true
+				},
+				where: {
+					IsCorrect: true
+				}
+			}
+		}
+	})
+
+	const retAnswer = answer.AnswerOfQuestion.map(answer => {
+		return {
+			id: answer.Answer.AnswerId,
+			text: answer.Answer.AnswerText
+		}
+	})
+
+	return retAnswer
+}
+
 module.exports = {
 	id, 
 	order,
 	type,
 	statementText,
-	answers
+	answers,
+	trueAnswer
 }

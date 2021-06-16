@@ -104,6 +104,7 @@ type Question {
 	type:				String!
 	statementText:		String!
 	answers:			[Answer!]
+	trueAnswer:			[Answer!]
 }
 
 input QuestionInput {
