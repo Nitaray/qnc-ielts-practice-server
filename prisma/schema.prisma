@@ -46,11 +46,12 @@ model Comment {
 }
 
 model HasDone {
-  UserId         Int
-  TestId         Int
-  CompletionDate DateTime @default(now()) @db.Date
-  Test           Test     @relation(fields: [TestId], references: [TestId])
-  User           User     @relation(fields: [UserId], references: [UserId])
+  UserId      Int
+  TestId      Int
+  StartTime   DateTime @default(now()) @db.Timestamp(6)
+  ScoreResult Float?   @default(0)
+  Test        Test     @relation(fields: [TestId], references: [TestId])
+  User        User     @relation(fields: [UserId], references: [UserId])
 
   @@id([UserId, TestId])
 }
@@ -114,7 +115,7 @@ model User {
   Password      String
   Rating        Int
   RoleId        Int
-  RefreshToken  String?         @db.Uuid
+  RefreshToken  String?         @unique @db.Uuid
   Role          Role            @relation(fields: [RoleId], references: [RoleId])
   AnswerHistory AnswerHistory[]
   Comment       Comment[]
