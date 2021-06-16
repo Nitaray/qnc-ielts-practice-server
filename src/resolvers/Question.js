@@ -15,6 +15,9 @@ function statementText(parent, args, context, info) {
 }
 
 async function answers(parent, args, context, info) {
+	if (parent.type === 'FITB')
+		return []
+	
 	const answer = await context.prisma.question.findUnique({
 		where: {
 			QuestionId: parent.id
