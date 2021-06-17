@@ -381,6 +381,14 @@ async function addQuestion(parent, args, context, info) {
 		}
 	})
 
+	await context.prisma.questionInGroup.create({
+		data: {
+			QuestionGroupId: group.QuestionGroupId,
+			QuestionId: addedQuestion.QuestionId,
+			QuestionNumbering: order
+		}
+	})
+
 	const retQuestion = {
 		id: addedQuestion.QuestionId,
 		order: order,
