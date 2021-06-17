@@ -487,7 +487,7 @@ async function startTest(parent, args, context, info) {
 }
 
 async function submitTest(parent, args, context, info) {
-	submission = args.testSubmission
+	let submission = args.testSubmission
 
 	if (!verifyUser(context.userId, submission.userId))
 		throw new Error('User unauthenticated for this request!')
@@ -507,7 +507,11 @@ async function submitTest(parent, args, context, info) {
 	if (new Date().getTime() - testHistory.StartTime > (TEST_TIME_LIMIT + TEST_TIME_LIMIT_LAX) * 60 * 1000)
 		throw new Error('Test submission failed due to test time limit exceeded!')
 
-	// TODO Finish implementation of submitTest
+	let answeredQuestions = submission.answers
+
+	answeredQuestions.map(answeredQ => {
+		
+	})
 }
 
 async function changeName(parent, args, context, info) {

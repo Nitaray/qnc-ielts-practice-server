@@ -128,8 +128,7 @@ input QuestionGroupInput {
 
 input QuestionAnswerInput {			
 	questionId:			Int!
-	answerId:			Int				# Use if is multiple choice or TF
-	answerString:		String			# Use if FiTB
+	answerString:		String!	
 }
 
 type AnsweredQuestion {
