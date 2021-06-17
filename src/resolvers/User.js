@@ -1,5 +1,5 @@
 const { verifyUser, verifyRolePermission } = require("../utils/auth");
-const { MOD_PERM_LVL } = require("../utils/permission")
+const { MOD_PERM_LVL } = require("../utils/config")
 
 function id(parent, args, context, info) {
     return parent.id;

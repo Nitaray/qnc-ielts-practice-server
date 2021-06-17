@@ -1,5 +1,5 @@
 const { verifyUser, verifyRolePermission } = require('../utils/auth')
-const { MOD_PERM_LVL } = require('../utils/permission')
+const { MOD_PERM_LVL } = require('../utils/config')
 
 async function allUsers(parent, args, context, info) {
 	const users = await context.prisma.user.findMany({
