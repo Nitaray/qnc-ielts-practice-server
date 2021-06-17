@@ -1,5 +1,6 @@
 const { verifyUser, verifyRolePermission } = require('../utils/auth')
 const { MOD_PERM_LVL } = require('../utils/config')
+const { calculateBand } = require('../utils/score')
 
 async function allUsers(parent, args, context, info) {
 	const users = await context.prisma.user.findMany({
@@ -187,7 +188,7 @@ async function getTestResult(parent, args, context, info) {
 				title: doneTest.Test.Title,
 				type: doneTest.Test.TestType
 			},
-			score: correctAnswers / questions.length,
+			score: calculateBand(correctAnswers),
 			answerHistory: answeredQuestionHistory
 		}
 	})

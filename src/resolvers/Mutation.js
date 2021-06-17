@@ -10,6 +10,7 @@ const {
 	} = require('../utils/auth')
 const { APP_SECRET } = require('../utils/jwt')
 const { ADMIN_PERM_LVL, TEST_TIME_LIMIT, TEST_TIME_LIMIT_LAX } = require('../utils/config')
+const { calculateBand } = require('../utils/score')
 
 async function signup(parent, args, context, info) {
 	if (args.user.username === "")
@@ -524,7 +525,9 @@ async function submitTest(parent, args, context, info) {
 	const answeredQuestions = submission.answers
 	const answerHistory = []
 
-	answeredQuestions.map(async (answeredQ, index) => {
+	let correctAnswers = 0
+
+	const requests = answeredQuestions.map(async (answeredQ, index) => {
 		const question = await context.prisma.question.findUnique({
 			where: {
 				QuestionId: answeredQ.questionId
@@ -547,18 +550,13 @@ async function submitTest(parent, args, context, info) {
 		if (question === null)
 			throw new Error('Question does not exists!')
 		
-		const answers = await context.prisma.answer.findMany({
+		let answer = await context.prisma.answer.findFirst({
 			where: {
 				AnswerText: answeredQ.answerString
 			},
-			select: {
-				AnswerId: true
-			}
 		})
 
-		var answer = {}		
-
-		if (answers === null) {
+		if (answer === null) {
 			answer = await context.prisma.answer.create({
 				data: {
 					AnswerText: answeredQ.answerString
@@ -566,7 +564,12 @@ async function submitTest(parent, args, context, info) {
 			})
 
 		} else {
-			// W.I.P
+			for (let i = 0; i < question.AnswerOfQuestion.length; i++)
+				if (answer.AnswerId === question.AnswerOfQuestion[i].Answer.AnswerId) {
+					answer = question.AnswerOfQuestion[i].Answer
+					correctAnswers++
+					break
+				}
 		}
 		
 		answerHistory.push({
@@ -581,7 +584,22 @@ async function submitTest(parent, args, context, info) {
 				text: answer.AnswerText
 			}
 		})
-	
+
+		await context.prisma.answerHistory.create({
+			data: {
+				UserId: submission.userId,
+				QuestionId: question.QuestionId,
+				UserAnswerId: answer.AnswerId
+			}
+		})
+	})
+
+	return Promise.all(requests).then(() => {
+		return {
+			test: test,
+			score: calculateBand(correctAnswers),
+			answerHistory: answerHistory
+		}
 	})
 }
 
