@@ -477,6 +477,26 @@ async function addAnswer(parent, args, context, info) {
 	return retAnswer
 }
 
+async function deleteTest(parent, args, context, info) {
+	if (context.roleId < ADMIN_PERM_LVL)
+		throw new Error(`Access Denied! Only user with permission level ${ADMIN_PERM_LVL} or higher can add a Test`)
+
+	const test = await context.prisma.test.delete({
+		where: {
+			TestId: args.testId
+		}
+	})
+
+	if (test === null)
+		throw new Error("Error deleting test! Test id may not exist!")
+
+	return {
+		id: test.TestId,
+		type: test.TestType,
+		title: test.Title
+	}
+}
+
 async function startTest(parent, args, context, info) {
 	if (!verifyUser(context.userId, args.userId))
 		throw new Error('User unauthenticated for this request!')
@@ -662,6 +682,7 @@ module.exports = {
 	addQuestionGroup,
 	addQuestion,
 	addAnswer,
+	deleteTest,
 	startTest,
 	submitTest,
 	changeName

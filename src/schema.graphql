@@ -23,6 +23,8 @@ type Mutation {
 	addQuestion(question: QuestionInput!):			Question!
 	addAnswer(answer: AnswerInput!):				Answer!
 
+	deleteTest(testId: Int!):						Test!
+
 	startTest(testId: Int!, userId: Int!):			Test!
 	submitTest(testSubmission: TestSubmission!):	TestResult!
 
