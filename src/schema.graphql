@@ -10,6 +10,7 @@ type Query {
 type Mutation {
 	signup(user: UserInput!): 						AuthPayload!
 	login(username: String!, password: String!):	AuthPayload!
+	logout:											Boolean!
 
 	refreshJWT:										AuthPayload!
 

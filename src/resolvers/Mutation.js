@@ -126,6 +126,29 @@ async function login(parent, args, context, info) {
 	}
 }
 
+async function logout(parent, args, context, info) {
+	if (context.userId === null)
+		throw new Error('Not currently logged in!')
+
+	const user = await context.prisma.user.update({
+		data: {
+			RefreshToken: null
+		}
+	})
+
+	if (user) {
+		context.res.cookie('refresh_token', '', {
+			httpOnly: true,
+			maxAge: 0,
+			secure: true,
+			sameSite: 'None'
+		})
+		return true
+	}
+
+	return false
+}
+
 async function refreshJWT(parent, args, context, info) {
 	cookies = context.req.cookies
 	if (!cookies)
@@ -630,6 +653,7 @@ async function changeName(parent, args, context, info) {
 module.exports = {
 	signup,
 	login,
+	logout,
 	refreshJWT,
 	createComment,
 	deleteComment,
