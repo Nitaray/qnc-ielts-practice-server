@@ -383,7 +383,7 @@ async function addQuestion(parent, args, context, info) {
 
 	await context.prisma.questionInGroup.create({
 		data: {
-			QuestionGroupId: group.QuestionGroupId,
+			QuestionGroupId: args.question.questionGroupId,
 			QuestionId: addedQuestion.QuestionId,
 			QuestionNumbering: order
 		}
@@ -495,7 +495,7 @@ async function startTest(parent, args, context, info) {
 }
 
 async function submitTest(parent, args, context, info) {
-	let submission = args.testSubmission
+	const submission = args.testSubmission
 
 	if (!verifyUser(context.userId, submission.userId))
 		throw new Error('User unauthenticated for this request!')
@@ -515,10 +515,73 @@ async function submitTest(parent, args, context, info) {
 	if (new Date().getTime() - testHistory.StartTime > (TEST_TIME_LIMIT + TEST_TIME_LIMIT_LAX) * 60 * 1000)
 		throw new Error('Test submission failed due to test time limit exceeded!')
 
-	let answeredQuestions = submission.answers
+	const test = await context.prisma.test.findUnique({
+		where: {
+			TestId: submission.testId
+		}
+	})
 
-	answeredQuestions.map(answeredQ => {
+	const answeredQuestions = submission.answers
+	const answerHistory = []
+
+	answeredQuestions.map(async (answeredQ, index) => {
+		const question = await context.prisma.question.findUnique({
+			where: {
+				QuestionId: answeredQ.questionId
+			},
+			select: {
+				QuestionId: true,
+				QuestionType: true,
+				Statement: true,
+				AnswerOfQuestion: {
+					select: {
+						Answer: true
+					},
+					where: {
+						IsCorrect: true
+					}
+				}
+			}
+		})
 		
+		if (question === null)
+			throw new Error('Question does not exists!')
+		
+		const answers = await context.prisma.answer.findMany({
+			where: {
+				AnswerText: answeredQ.answerString
+			},
+			select: {
+				AnswerId: true
+			}
+		})
+
+		var answer = {}		
+
+		if (answers === null) {
+			answer = await context.prisma.answer.create({
+				data: {
+					AnswerText: answeredQ.answerString
+				}
+			})
+
+		} else {
+			for ()
+		}
+		
+		answerHistory.push({
+			question: {
+				id: question.QuestionId,
+				order: index,
+				type: question.QuestionType,
+				statementText: question.Statement
+			},
+			answer: {
+				id: answer.AnswerId,
+				text: answer.AnswerText
+			}
+		})
+	
 	})
 }
 
