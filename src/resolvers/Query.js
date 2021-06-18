@@ -178,7 +178,8 @@ async function getTestResult(parent, args, context, info) {
 			}
 		})
 
-		correctAnswers += answerOfQuestion.IsCorrect ? 1 : 0
+		if (answerOfQuestion !== null)
+			correctAnswers += answerOfQuestion.IsCorrect ? 1 : 0
 	})
 
 	return Promise.all(requests).then(() => {
