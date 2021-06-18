@@ -133,6 +133,9 @@ async function logout(parent, args, context, info) {
 	const user = await context.prisma.user.update({
 		data: {
 			RefreshToken: null
+		},
+		where: {
+			UserId: context.userId
 		}
 	})
 
