@@ -525,7 +525,7 @@ async function startTest(parent, args, context, info) {
 	await context.prisma.hasDone.create({
 		data: {
 			UserId: args.userId,
-			TestId: args.TestId,
+			TestId: args.testId,
 		}
 	})
 
