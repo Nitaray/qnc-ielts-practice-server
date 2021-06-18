@@ -562,15 +562,82 @@ async function submitTest(parent, args, context, info) {
 	const test = await context.prisma.test.findUnique({
 		where: {
 			TestId: submission.testId
+		},
+		select: {
+			TestId: true,
+			TestType: true,
+			Title: true,
+			TestSection: {
+				select: {
+					QuestionGroup: {
+						select: {
+							QuestionInGroup: {
+								select: {
+									Question: {
+										select: {
+											QuestionId: true,
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	})
 
+	const validQuestionId = []
+
+	test.TestSection.map(section => {
+		section.QuestionGroup.map(group => {
+			group.QuestionInGroup.map(qig => {
+				validQuestionId.push(qig.Question.QuestionId)
+			})
+		})
+	})
+
+	
 	const answeredQuestions = submission.answers
+	const answeredQuestionId = []
 	const answerHistory = []
-
 	let correctAnswers = 0
+	
+	answeredQuestions.map(answeredQ => {
+		if (!validQuestionId.includes(answeredQ.questionId))
+			throw new Error('Some answered question is not contained in the test!')
+		answeredQuestionId.push(answeredQ.questionId)
+	})
 
-	const requests = answeredQuestions.map(async (answeredQ, index) => {
+	const asyncRequests = []
+
+	const request1 = validQuestionId.map(async validId => {
+		if (!answeredQuestionId.includes(validId)) {
+			let answer = await context.prisma.answer.findFirst({
+				where: {
+					AnswerText: "" 
+				},
+			})
+
+			if (answer === null) {
+				answer = await context.prisma.answer.create({
+					data: {
+						AnswerText: ""
+					}
+				})
+			}
+
+			await context.prisma.answerHistory.create({
+				data: {
+					UserId: submission.userId,
+					QuestionId: validId,
+					UserAnswerId: answer.AnswerId
+				}
+			})
+		}
+	})
+
+	const request2 = answeredQuestions.map(async (answeredQ, index) => {
 		const question = await context.prisma.question.findUnique({
 			where: {
 				QuestionId: answeredQ.questionId
@@ -637,7 +704,9 @@ async function submitTest(parent, args, context, info) {
 		})
 	})
 
-	return Promise.all(requests).then(() => {
+	asyncRequests.push(request1, request2)
+
+	return Promise.all(asyncRequests).then(() => {
 		return {
 			test: {
 				id: test.TestId,
