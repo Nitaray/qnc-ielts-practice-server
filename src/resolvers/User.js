@@ -91,6 +91,9 @@ async function doneTests(parent, args, context, info) {
         }
     })
 
+    if (doneTests === null) 
+        return []
+
     const retTest = doneTests.HasDone.map(testRecord => {
         return {
             id: testRecord.Test.TestId,
