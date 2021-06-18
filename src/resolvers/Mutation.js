@@ -639,7 +639,11 @@ async function submitTest(parent, args, context, info) {
 
 	return Promise.all(requests).then(() => {
 		return {
-			test: test,
+			test: {
+				id: test.TestId,
+				type: test.TestType,
+				title: test.Title
+			},
 			score: calculateBand(correctAnswers),
 			answerHistory: answerHistory
 		}
