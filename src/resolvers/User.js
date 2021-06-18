@@ -69,7 +69,7 @@ async function comments(parent, args, context, info) {
 }
 
 async function doneTests(parent, args, context, info) {
-    if (!verifyUser(context.userId, args.userId) && !verifyRolePermission(context.roleId, MOD_PERM_LVL))
+    if (!verifyUser(context.userId, parent.id) && !verifyRolePermission(context.roleId, MOD_PERM_LVL))
         return []
 
     const doneTests = await context.prisma.user.findUnique({

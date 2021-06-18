@@ -8,7 +8,7 @@ function verifyUser(currentID, claimedID) {
 }
 
 function verifyRolePermission(reqRoleId, tarRoleId) {
-    return reqRoleId > tarRoleId;
+    return reqRoleId >= tarRoleId;
 }
 
 module.exports = {
