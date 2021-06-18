@@ -91,16 +91,17 @@ async function doneTests(parent, args, context, info) {
         }
     })
 
-    if (doneTests === null) 
-        return []
-
-    const retTest = doneTests.HasDone.map(testRecord => {
+    let retTest = doneTests.HasDone.map(testRecord => {
         return {
             id: testRecord.Test.TestId,
             title: testRecord.Test.Title,
             type: testRecord.Test.TestType
         }
     }) 
+
+    if (retTest === null)
+        retTest = []
+
     return retTest
 }
 
