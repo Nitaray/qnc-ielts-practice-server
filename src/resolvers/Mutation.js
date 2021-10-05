@@ -291,7 +291,7 @@ async function deleteComment(parent, args, context, info) {
 }
 
 async function addTest(parent, args, context, info) {
-	if (context.roleId < ADMIN_PERM_LVL)
+	if (!verifyRolePermission(context.roleId, ADMIN_PERM_LVL))
 		throw new Error(`Access Denied! Only user with permission level ${ADMIN_PERM_LVL} or higher can add a Test`)
 	
 	const test = await context.prisma.test.findUnique({
@@ -481,8 +481,8 @@ async function addAnswer(parent, args, context, info) {
 }
 
 async function deleteTest(parent, args, context, info) {
-	if (context.roleId < ADMIN_PERM_LVL)
-		throw new Error(`Access Denied! Only user with permission level ${ADMIN_PERM_LVL} or higher can add a Test`)
+	if (!verifyRolePermission(context.roleId, ADMIN_PERM_LVL))
+		throw new Error(`Access Denied! Only user with permission level ${ADMIN_PERM_LVL} or higher can delete a Test`)
 
 	const test = await context.prisma.test.delete({
 		where: {

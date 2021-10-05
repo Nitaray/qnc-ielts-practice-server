@@ -17,7 +17,11 @@ const TestSection = require('./resolvers/TestSection')
 const QuestionGroup = require('./resolvers/QuestionGroup')
 const Question = require('./resolvers/Question')
 
+process.env.DATASOURCE_URL = `postgres://${process.env.DATABASE_USERNAME}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE_URL}:${process.env.DATABASE_PORT}/${process.env.DATABASE_NAME}`
+
 const prisma = new PrismaClient()
+
+console.log(process.env.DATASOURCE_URL)
 
 
 const resolvers = {
@@ -38,19 +42,19 @@ const server = new ApolloServer({
 		'utf-8'
 	),
 	resolvers,
-	context: ({req, res}) => {
+	context: ({ req, res }) => {
 		return {
 			...req,
 			...res,
 			prisma,
 			userId:
 				req && req.headers.authorization
-					?	getUserId(req)
-					:	null,
+					? getUserId(req)
+					: null,
 			roleId:
 				req && req.headers.authorization
-					?	getUserRoleId(req)
-					:	null
+					? getUserRoleId(req)
+					: null
 		}
 	}
 })
